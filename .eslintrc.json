@@ -5,12 +5,19 @@
     },
     "extends": [
         "standard-with-typescript",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime"
     ],
+    "settings": {
+      "react":{
+        "version": "detect"
+      }
+    },
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": "./tsconfig.json"
+        "project": "./tsconfig.json",
+        "warnOnUnsupportedTypeScriptVersion": false
     },
     "plugins": [
         "react"
