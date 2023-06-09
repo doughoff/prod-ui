@@ -1,11 +1,4 @@
 import { api, initializeApi } from './apiClient';
-import { Status, User } from './types';
-
-interface AuthRepository {
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => Promise<boolean>;
-  // profile: () => Promise<User>;
-}
 
 const login = (email: string, password: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {

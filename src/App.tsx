@@ -17,33 +17,33 @@ const App: React.FunctionComponent = () => {
       path: "/",
       element: <Index />,
     },
-    // {
-    //   path: "/login",
-    //   element: <LoginPage />,
-    // },
-    // {
-    //   path: "/app",
-    //   element: <AppTemplate />,
-    //   children: [
-    //     {
-    //       path: "/app/",
-    //       element: <IndexPage />,
-    //     },
-    //     {
-    //       path: "/app/users",
-    //       children: [
-    //         {
-    //           path: "/app/users",
-    //           element: <UserListingPage />,
-    //         },
-    //         {
-    //           path: "/app/users/create",
-    //           element: <CreateUserFormPage />,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
+    {
+      path: "/login",
+      element: <LoginPage />,
+    },
+    {
+      path: "/app",
+      element: <AppTemplate />,
+      children: [
+        {
+          path: "/app/",
+          element: <IndexPage />,
+        },
+        {
+          path: "/app/users",
+          children: [
+            {
+              path: "/app/users",
+              element: <UserListingPage />,
+            },
+            {
+              path: "/app/users/create",
+              element: <CreateUserFormPage />,
+            },
+          ],
+        },
+      ],
+    },
   ]);
   return (
     <ConfigProvider locale={esES}>
