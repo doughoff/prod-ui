@@ -1,31 +1,32 @@
-import { Tag } from 'antd'
-import type { Roles } from '../../../api'
+import { Tag } from "antd";
+import type { Roles } from "../../../api";
+import React from "react";
 
 export interface Props {
-  role: Roles
-  className?: string
+  role: Roles;
+  className?: string;
 }
 
 const RoleTag: React.FC<Props> = ({ role, className }) => {
-  if (role === 'ADMIN') {
+  if (role === "ADMIN") {
     return (
-      <Tag className={className} color='blue'>
+      <Tag className={className} color="blue">
         Administrador
       </Tag>
-    )
-  } else if (role === 'OPERATOR') {
+    );
+  } else if (role === "OPERATOR") {
     return (
-      <Tag className={className} color='cyan'>
+      <Tag className={className} color="cyan">
         Operador
       </Tag>
-    )
+    );
   } else {
     return (
-      <Tag className={className} color='gray'>
+      <Tag className={className} color="gray">
         No Identificado
       </Tag>
-    )
+    );
   }
-}
+};
 
-export default RoleTag
+export default RoleTag;

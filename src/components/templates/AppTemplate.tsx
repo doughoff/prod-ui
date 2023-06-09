@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   UserOutlined,
   HomeOutlined,
@@ -9,42 +9,34 @@ import {
   CaretDownOutlined,
   LoginOutlined,
   ExperimentOutlined,
-  UnorderedListOutlined
-} from '@ant-design/icons'
-import {
-  Layout,
-  Button,
-  theme,
-  Dropdown,
-  Menu,
-  Breadcrumb,
-  Typography
-} from 'antd'
+  UnorderedListOutlined,
+} from "@ant-design/icons";
+import { Layout, Button, theme, Dropdown, Menu } from "antd";
 
-import { Outlet, useNavigate, Link } from 'react-router-dom'
+import { Outlet, useNavigate, Link } from "react-router-dom";
 
-import './AppTemplate.module.css'
-import { SideBarMenu } from '../organisms/SideBarMenu'
+import "./AppTemplate.module.css";
+import { SideBarMenu } from "../organisms/SideBarMenu";
 
-const { Header, Content } = Layout
+const { Header, Content } = Layout;
 
 const AppTemplate: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
-    token: { colorBgContainer }
-  } = theme.useToken()
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: "100vh" }}>
       <Header
         style={{
-          padding: '0 24px 24px',
-          background: '#18181b',
-          color: 'white'
+          padding: "0 24px 24px",
+          background: "#18181b",
+          color: "white",
         }}
       >
-        <div className='flex flex-row justify-between'>
+        <div className="flex flex-row justify-between">
           <span>
             <strong>HK</strong> | Productions
           </span>
@@ -58,64 +50,64 @@ const AppTemplate: React.FC = () => {
                       expandIcon={({ isOpen }) =>
                         isOpen ? <CaretUpFilled /> : <CaretDownOutlined />
                       }
-                      style={{ width: 256, border: 'none' }}
-                      mode='inline'
+                      style={{ width: 256, border: "none" }}
+                      mode="inline"
                       items={[
                         {
                           label: (
-                            <div className='flex flex-col'>
-                              <span className='text-black'>John</span>
+                            <div className="flex flex-col">
+                              <span className="text-black">John</span>
                               <span>email@email.com</span>
                             </div>
                           ),
-                          key: '0',
-                          type: 'group'
+                          key: "0",
+                          type: "group",
                         },
                         {
-                          key: '1',
-                          type: 'divider'
+                          key: "1",
+                          type: "divider",
                         },
                         {
-                          label: 'Perfil',
-                          key: '2',
+                          label: "Perfil",
+                          key: "2",
                           icon: <UserOutlined />,
                           onClick: () => {
-                            navigate('/')
-                          }
+                            navigate("/");
+                          },
                         },
                         {
-                          key: '4',
-                          type: 'divider'
+                          key: "4",
+                          type: "divider",
                         },
                         {
-                          label: 'Cerrar Sesión',
-                          key: '5',
+                          label: "Cerrar Sesión",
+                          key: "5",
                           icon: <LogoutOutlined />,
                           onClick: () => {
-                            navigate('/login')
+                            navigate("/login");
                           },
-                          danger: true
-                        }
+                          danger: true,
+                        },
                       ]}
                     />
                   ),
-                  key: '0',
-                  type: 'group'
-                }
+                  key: "0",
+                  type: "group",
+                },
               ],
-              style: { minWidth: '256px' }
+              style: { minWidth: "256px" },
             }}
-            trigger={['click']}
+            trigger={["click"]}
           >
             <Button
-              type='text'
+              type="text"
               style={{
                 width: 64,
                 height: 64,
-                border: 'none'
+                border: "none",
               }}
             >
-              <UserOutlined style={{ color: 'white' }} />
+              <UserOutlined style={{ color: "white" }} />
             </Button>
           </Dropdown>
         </div>
@@ -124,48 +116,48 @@ const AppTemplate: React.FC = () => {
         <SideBarMenu
           routes={[
             {
-              path: '/app',
+              path: "/app",
               icon: <HomeOutlined />,
-              label: <Link to='/app'>App</Link>
+              label: <Link to="/app">App</Link>,
             },
             {
-              path: '/app/users',
+              path: "/app/users",
               icon: <UserOutlined />,
-              label: <Link to='/app/users'>Usuario</Link>
+              label: <Link to="/app/users">Usuario</Link>,
             },
             {
-              path: '/app/products',
+              path: "/app/products",
               icon: <BarcodeOutlined />,
-              label: <Link to='/app/products'>Productos</Link>
+              label: <Link to="/app/products">Productos</Link>,
             },
             {
-              path: '/app/suppliers',
+              path: "/app/suppliers",
               icon: <ShopOutlined />,
-              label: <Link to='/app/suppliers'>Proveedores</Link>
+              label: <Link to="/app/suppliers">Proveedores</Link>,
             },
             {
-              path: '/app/stock_entry',
+              path: "/app/stock_entry",
               icon: <LoginOutlined />,
-              label: <Link to='/app/stock_entry'>Entrada de Estoque</Link>
+              label: <Link to="/app/stock_entry">Entrada de Estoque</Link>,
             },
             {
-              path: '/app/recipes',
+              path: "/app/recipes",
               icon: <ExperimentOutlined />,
-              label: <Link to='/app/recipes'>Formulas</Link>
+              label: <Link to="/app/recipes">Formulas</Link>,
             },
             {
-              path: '/app/production_orders',
+              path: "/app/production_orders",
               icon: <UnorderedListOutlined />,
               label: (
-                <Link to='/app/production_orders'>Orden de Produciones</Link>
-              )
-            }
+                <Link to="/app/production_orders">Orden de Produciones</Link>
+              ),
+            },
           ]}
         />
         <Layout>
           <Content
             style={{
-              background: colorBgContainer
+              background: colorBgContainer,
             }}
           >
             <Outlet />
@@ -173,7 +165,7 @@ const AppTemplate: React.FC = () => {
         </Layout>
       </Layout>
     </Layout>
-  )
-}
+  );
+};
 
-export default AppTemplate
+export default AppTemplate;

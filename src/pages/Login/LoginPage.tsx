@@ -1,5 +1,5 @@
 import { Button, Card, Checkbox, Form, Input, Typography } from "antd";
-import { getAllUser } from "../../utils";
+import React from "react";
 
 const LoginPage: React.FC = () => {
   return (
@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item style={{ marginBottom: "0px" }}>
-            <Button type="primary" htmlType="submit" onClick={getAllUser}>
+            <Button type="primary" htmlType="submit">
               Entrar
             </Button>
           </Form.Item>

@@ -1,26 +1,27 @@
-import { Breadcrumb, Typography } from 'antd'
+import { Breadcrumb, Typography } from "antd";
+import React from "react";
 
 interface Props {
-  pageTitle: string
+  pageTitle: string;
   items: Array<{
-    title: JSX.Element | string
-  }>
+    title: JSX.Element | string;
+  }>;
 }
 
 const PageHeader: React.FunctionComponent<Props> = ({ items, pageTitle }) => {
   return (
-    <div className='px-5 py-2 bg-gray-100'>
+    <div className="px-5 py-2 bg-gray-100">
       <Breadcrumb
-        style={{ margin: '16px 0' }}
+        style={{ margin: "16px 0" }}
         items={items.map((item) => ({
-          title: item.title
+          title: item.title,
         }))}
       />
-      <div className='flex justify-between '>
+      <div className="flex justify-between ">
         <Typography.Title level={3}>{pageTitle}</Typography.Title>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PageHeader
+export default PageHeader;

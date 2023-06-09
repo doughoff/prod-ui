@@ -1,5 +1,6 @@
+import React from "react";
 import { FormItemGroup } from "../../components";
-import { Button, Divider, Form, Input, Select } from "antd";
+import { Divider, Form, Input, Select } from "antd";
 
 export const CreateUserForm: React.FC = () => {
   return (

@@ -8,6 +8,7 @@ import {
   UserListingPage,
 } from "./pages";
 import AppTemplate from "./components/templates/AppTemplate";
+import React from "react";
 
 const App: React.FunctionComponent = () => {
   const router = createBrowserRouter([

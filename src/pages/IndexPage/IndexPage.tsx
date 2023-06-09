@@ -1,4 +1,5 @@
-import { PageHeader } from '../../components'
+import React from "react";
+import { PageHeader } from "../../components";
 
 const IndexPage: React.FC = () => {
   return (
@@ -6,13 +7,13 @@ const IndexPage: React.FC = () => {
       <PageHeader
         items={[
           {
-            title: 'App'
-          }
+            title: "App",
+          },
         ]}
-        pageTitle='Pagina de Inicio'
+        pageTitle="Pagina de Inicio"
       />
     </>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;
