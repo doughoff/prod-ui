@@ -6,6 +6,7 @@ import {
   IndexPage,
   LoginPage,
   UserListingPage,
+  Index
 } from "./pages";
 import AppTemplate from "./components/templates/AppTemplate";
 import React from "react";
@@ -13,32 +14,36 @@ import React from "react";
 const App: React.FunctionComponent = () => {
   const router = createBrowserRouter([
     {
-      path: "/login",
-      element: <LoginPage />,
+      path: "/",
+      element: <Index />,
     },
-    {
-      path: "/app",
-      element: <AppTemplate />,
-      children: [
-        {
-          path: "/app/",
-          element: <IndexPage />,
-        },
-        {
-          path: "/app/users",
-          children: [
-            {
-              path: "/app/users",
-              element: <UserListingPage />,
-            },
-            {
-              path: "/app/users/create",
-              element: <CreateUserFormPage />,
-            },
-          ],
-        },
-      ],
-    },
+    // {
+    //   path: "/login",
+    //   element: <LoginPage />,
+    // },
+    // {
+    //   path: "/app",
+    //   element: <AppTemplate />,
+    //   children: [
+    //     {
+    //       path: "/app/",
+    //       element: <IndexPage />,
+    //     },
+    //     {
+    //       path: "/app/users",
+    //       children: [
+    //         {
+    //           path: "/app/users",
+    //           element: <UserListingPage />,
+    //         },
+    //         {
+    //           path: "/app/users/create",
+    //           element: <CreateUserFormPage />,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
   ]);
   return (
     <ConfigProvider locale={esES}>
