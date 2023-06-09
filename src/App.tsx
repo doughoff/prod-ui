@@ -1,7 +1,49 @@
-import './App.css'
+import { ConfigProvider } from "antd";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import esES from "antd/locale/es_ES";
+import {
+  CreateUserFormPage,
+  IndexPage,
+  LoginPage,
+  UserListingPage,
+} from "./pages";
+import AppTemplate from "./components/templates/AppTemplate";
 
 const App: React.FunctionComponent = () => {
-  return <>app</>
-}
+  const router = createBrowserRouter([
+    {
+      path: "/login",
+      element: <LoginPage />,
+    },
+    {
+      path: "/app",
+      element: <AppTemplate />,
+      children: [
+        {
+          path: "/app/",
+          element: <IndexPage />,
+        },
+        {
+          path: "/app/users",
+          children: [
+            {
+              path: "/app/users",
+              element: <UserListingPage />,
+            },
+            {
+              path: "/app/users/create",
+              element: <CreateUserFormPage />,
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+  return (
+    <ConfigProvider locale={esES}>
+      <RouterProvider router={router} />
+    </ConfigProvider>
+  );
+};
 
-export default App
+export default App;
