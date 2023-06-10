@@ -1,5 +1,6 @@
 import React from "react";
 import { PageHeader } from "../../components";
+import { getAllUsers } from "../../api/userRepository";
 
 const IndexPage: React.FC = () => {
   return (
@@ -12,6 +13,13 @@ const IndexPage: React.FC = () => {
         ]}
         pageTitle="Pagina de Inicio"
       />
+      <button
+        onClick={() => {
+          getAllUsers("INACTIVE");
+        }}
+      >
+        Test Button
+      </button>
     </>
   );
 };

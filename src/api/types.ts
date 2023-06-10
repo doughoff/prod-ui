@@ -1,5 +1,5 @@
-export type Status = 'ACTIVE' | 'INACTIVE';
-export type Roles = 'ADMIN' | 'OPERATOR';
+export type Status = "ACTIVE" | "INACTIVE";
+export type Roles = "ADMIN" | "OPERATOR";
 
 export interface User {
   id: string;

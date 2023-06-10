@@ -1,31 +1,18 @@
 import React from "react";
-import { login } from '../api';
-import { api } from '../api';
+import { useNavigate } from "react-router-dom";
 
 const IndexPage: React.FC = () => {
-  return (
-    <div>
-      <div>hello</div>
-      <button onClick={() => {
-        login(
-          "admin@hk.com",
-          "12345"
-        )
-          .then((res) => {
-            console.log(res);
-          }).catch(err => {
-            console.log(err)
-          })
-      }}>click me</button><br />
-      <button onClick={() => {
-        api.get("/users?").then(res => {
-          console.log(res)
-        }).catch(err => {
-          console.log(err)
-        })
-      }}>users</button>
-    </div >
-  );
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    const sessionID = localStorage.getItem("sessionID");
+    if (sessionID) {
+      navigate("/app");
+    }
+    if (!sessionID) {
+      navigate("/login");
+    }
+  }, []);
+  return <div></div>;
 };
 
 export default IndexPage;

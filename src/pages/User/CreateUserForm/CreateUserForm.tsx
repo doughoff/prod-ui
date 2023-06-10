@@ -1,23 +1,18 @@
 import React from "react";
-import { FormItemGroup } from "../../components";
+import { FormItemGroup } from "../../../components";
 import { Divider, Form, Input, Select } from "antd";
-
-export const CreateUserForm: React.FC = () => {
+const CreateUserForm: React.FC = () => {
   return (
     <Form>
       <Form.Item>
-        <FormItemGroup
-          inputs={<Input placeholder="Nombre" />}
-          title="Nombre"
-          description="Description"
-        />
+        <Divider className="mt-0" />
+        <FormItemGroup inputs={<Input placeholder="Nombre" />} title="Nombre" />
       </Form.Item>
       <Divider />
       <Form.Item>
         <FormItemGroup
           inputs={<Input placeholder="Correo Electrónico" />}
           title="Correo Electrónico"
-          description="Description"
         />
       </Form.Item>
       <Divider />
@@ -25,7 +20,6 @@ export const CreateUserForm: React.FC = () => {
         <FormItemGroup
           inputs={<Input.Password placeholder="Contraseña" />}
           title="Contraseña"
-          description="Description"
         />
       </Form.Item>
       <Divider />
@@ -33,7 +27,6 @@ export const CreateUserForm: React.FC = () => {
         <FormItemGroup
           inputs={<Input.Password placeholder="Confirmación de Contraseña" />}
           title="Confirmación de Contraseña"
-          description="Description"
         />
       </Form.Item>
       <Divider />
@@ -59,10 +52,10 @@ export const CreateUserForm: React.FC = () => {
             />
           }
           title="Roles"
-          description="Description"
         />
       </Form.Item>
       <Divider />
     </Form>
   );
 };
+export default CreateUserForm;

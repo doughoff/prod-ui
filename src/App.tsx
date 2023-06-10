@@ -1,15 +1,10 @@
 import { ConfigProvider } from "antd";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import esES from "antd/locale/es_ES";
-import {
-  CreateUserFormPage,
-  IndexPage,
-  LoginPage,
-  UserListingPage,
-  Index
-} from "./pages";
+import { IndexPage, LoginPage, UserListingPage, Index } from "./pages";
 import AppTemplate from "./components/templates/AppTemplate";
 import React from "react";
+import { initializeApi } from "./api";
 
 const App: React.FunctionComponent = () => {
   const router = createBrowserRouter([
@@ -36,15 +31,15 @@ const App: React.FunctionComponent = () => {
               path: "/app/users",
               element: <UserListingPage />,
             },
-            {
-              path: "/app/users/create",
-              element: <CreateUserFormPage />,
-            },
           ],
         },
       ],
     },
   ]);
+  React.useEffect(() => {
+    initializeApi();
+  }, []);
+
   return (
     <ConfigProvider locale={esES}>
       <RouterProvider router={router} />

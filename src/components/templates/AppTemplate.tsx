@@ -17,6 +17,7 @@ import { Outlet, useNavigate, Link } from "react-router-dom";
 
 import "./AppTemplate.module.css";
 import { SideBarMenu } from "../organisms/SideBarMenu";
+import { logout } from "../../api";
 
 const { Header, Content } = Layout;
 
@@ -26,6 +27,13 @@ const AppTemplate: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  React.useEffect(() => {
+    const sessionID = localStorage.getItem("sessionID");
+    if (!sessionID) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -84,7 +92,13 @@ const AppTemplate: React.FC = () => {
                           key: "5",
                           icon: <LogoutOutlined />,
                           onClick: () => {
-                            navigate("/login");
+                            logout()
+                              .then(() => {
+                                navigate("/login");
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
                           },
                           danger: true,
                         },

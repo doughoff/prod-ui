@@ -1,6 +1,6 @@
 import { Modal } from "antd";
 import React from "react";
-import { CreateUserForm } from "./CreateUserForm";
+import { CreateUserForm } from ".";
 
 interface UserFormModalProps {
   isModalOpen: boolean;
@@ -15,7 +15,7 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
   return (
     <Modal
       okText="Crear"
-      title="Basic Modal"
+      title="Crear Nuevo Usuario"
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}

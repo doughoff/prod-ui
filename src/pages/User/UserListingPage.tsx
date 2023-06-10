@@ -1,12 +1,12 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PageHeader, RoleTag, StatusTag } from "../../components";
+import dayjs from "dayjs";
+import { User } from "../../api";
+import { ColumnsType } from "antd/es/table";
 import { Button, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import type { User } from "../../api";
-import type { ColumnsType } from "antd/es/table";
-import React from "react";
-import CreateUserFormModal from "./UserFormModal";
+import CreateUserFormModal from "./CreateUserForm/UserFormModal";
 
 const UserListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,18 +31,6 @@ const UserListingPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const data: User[] = [
-    {
-      id: "alexisduche",
-      status: "ACTIVE",
-      name: "Alexis Duche",
-      email: "alexisduche@gmail.com",
-      password: "123456",
-      createdAt: new Date(2018, 15, 24, 10, 33, 30),
-      updatedAt: new Date(2018, 15, 24, 10, 33, 30),
-      roles: ["ADMIN", "OPERATOR"],
-    },
-  ];
   const columns: ColumnsType<User> = [
     {
       title: "Fecha de creación",
@@ -121,22 +109,11 @@ const UserListingPage: React.FC = () => {
               { value: "all", label: "Todos" },
             ]}
           />
-          <Button
-            icon={<PlusOutlined />}
-            // onClick={() => {
-            //   navigate('/app/users/create')
-            // }}
-            onClick={showModal}
-          >
+          <Button icon={<PlusOutlined />} onClick={showModal}>
             Nuevo Usuario
           </Button>
         </div>
-        <Table
-          className="mt-3"
-          size="small"
-          columns={columns}
-          dataSource={data}
-        />
+        <Table className="mt-3" size="small" columns={columns} />
         <CreateUserFormModal
           isModalOpen={isModalOpen}
           handleCancel={handleCancel}
