@@ -1,6 +1,6 @@
 import React from "react";
 import { PageHeader } from "../../components";
-import { getAllUsers } from "../../api/userRepository";
+import { checkEmail } from "../../api";
 
 const IndexPage: React.FC = () => {
   return (
@@ -15,10 +15,10 @@ const IndexPage: React.FC = () => {
       />
       <button
         onClick={() => {
-          getAllUsers("INACTIVE");
+          checkEmail("st@test.com");
         }}
       >
-        Test Button
+        Test
       </button>
     </>
   );

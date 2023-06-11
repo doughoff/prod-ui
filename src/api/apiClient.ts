@@ -9,6 +9,5 @@ export function initializeApi() {
 
   if (sessionID) {
     api.defaults.headers.common["x-session"] = sessionID;
-    console.log("loop infinitio");
   }
 }

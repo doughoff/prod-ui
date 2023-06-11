@@ -11,3 +11,9 @@ export interface User {
   updatedAt: Date;
   roles: Roles[];
 }
+export interface CreateUser {
+  name: string;
+  email: string;
+  password: string;
+  roles: Roles[];
+}

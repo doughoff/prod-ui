@@ -2,11 +2,13 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PageHeader, RoleTag, StatusTag } from "../../components";
 import dayjs from "dayjs";
-import { User } from "../../api";
+import { Status, User, getAllUsers } from "../../api";
 import { ColumnsType } from "antd/es/table";
 import { Button, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import CreateUserFormModal from "./CreateUserForm/UserFormModal";
+
+import { useQuery } from "@tanstack/react-query";
+import { CreateUserFormModal } from "./CreateUserForm";
 
 const UserListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,12 +25,18 @@ const UserListingPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+  const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const { data, isLoading } = useQuery({
+    queryKey: ["users", filter],
+    queryFn: () => getAllUsers(filter),
+  });
+
+  const handleChange = (value: string | Status) => {
+    if (value != "ALL") {
+      return setFilter(value as Status);
+    }
+    return setFilter(undefined);
   };
 
   const columns: ColumnsType<User> = [
@@ -101,23 +109,30 @@ const UserListingPage: React.FC = () => {
       <div className="p-6">
         <div className="flex justify-between gap-3">
           <Select
-            defaultValue="active"
+            defaultValue="ACTIVE"
             style={{ width: 120 }}
+            onChange={handleChange}
             options={[
-              { value: "active", label: "Activos" },
-              { value: "inactive", label: "Inactivos" },
-              { value: "all", label: "Todos" },
+              { value: "ACTIVE", label: "Activos" },
+              { value: "INACTIVE", label: "Inactivos" },
+              { value: "ALL", label: "Todos" },
             ]}
           />
           <Button icon={<PlusOutlined />} onClick={showModal}>
             Nuevo Usuario
           </Button>
         </div>
-        <Table className="mt-3" size="small" columns={columns} />
+        <Table
+          rowKey="id"
+          loading={isLoading}
+          className="mt-3"
+          size="small"
+          columns={columns}
+          dataSource={data}
+        />
         <CreateUserFormModal
           isModalOpen={isModalOpen}
-          handleCancel={handleCancel}
-          handleOk={handleOk}
+          setIsModalOpen={setIsModalOpen}
         />
       </div>
     </>
