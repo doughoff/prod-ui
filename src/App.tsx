@@ -1,7 +1,13 @@
 import { ConfigProvider } from "antd";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import esES from "antd/locale/es_ES";
-import { IndexPage, LoginPage, UserListingPage, Index } from "./pages";
+import {
+  IndexPage,
+  LoginPage,
+  UserListingPage,
+  Index,
+  UserDetailPage,
+} from "./pages";
 import AppTemplate from "./components/templates/AppTemplate";
 import React from "react";
 import { initializeApi } from "./api";
@@ -45,6 +51,10 @@ const App: React.FunctionComponent = () => {
             {
               path: "/app/users",
               element: <UserListingPage />,
+            },
+            {
+              path: "/app/users/info/:userId",
+              element: <UserDetailPage />,
             },
           ],
         },

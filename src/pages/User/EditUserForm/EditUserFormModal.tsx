@@ -7,27 +7,27 @@ import { Controller, useForm } from "react-hook-form";
 import { userSchema } from "../userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckOutlined } from "@ant-design/icons";
-import { checkEmail, createUser } from "../../../api";
+import { User, checkEmail, editUser } from "../../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormItemGroup } from "../../../components";
 
 interface UserFormModalProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  userData?: User;
 }
 
-const userSchemaWithPasswordValidation = userSchema.refine(
-  (data) => data.password === data.passwordConfirmation,
-  {
-    message: "Las contraseñas no coinciden",
-    path: ["passwordConfirmation"],
-  }
-);
-type UserPayloadType = z.infer<typeof userSchemaWithPasswordValidation>;
+const partialUserSchema = userSchema.pick({
+  name: true,
+  email: true,
+  roles: true,
+});
+type PartialUserPayloadType = z.infer<typeof partialUserSchema>;
 
-const CreateUserFormModal: React.FC<UserFormModalProps> = ({
+const EditUserFormModal: React.FC<UserFormModalProps> = ({
   isModalOpen,
   setIsModalOpen,
+  userData,
 }) => {
   const {
     control,
@@ -36,8 +36,8 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     setError,
     clearErrors,
     formState: { errors },
-  } = useForm<UserPayloadType>({
-    resolver: zodResolver(userSchemaWithPasswordValidation),
+  } = useForm<PartialUserPayloadType>({
+    resolver: zodResolver(partialUserSchema),
   });
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -70,29 +70,33 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
         });
     }, 300);
   }, []);
-  const createNewUser = React.useCallback((data: UserPayloadType) => {
-    return createUser({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      roles: data.roles,
-    });
+  const editNewUser = React.useCallback((data: PartialUserPayloadType) => {
+    return editUser(
+      {
+        name: data.name,
+        email: data.email,
+        password: "123456",
+        roles: data.roles,
+        status: userData ? userData?.status : "ACTIVE",
+      },
+      userData?.id
+    );
   }, []);
   const { isPending, mutate } = useMutation({
-    mutationFn: createNewUser,
+    mutationFn: editNewUser,
     onSuccess: () => {
-      message.success("Usuario creado correctamente");
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      message.success("Usuario editado correctamente");
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       setIsModalOpen(false);
     },
     onError: () => {
-      message.error("Error al crear el usuario");
+      message.error("Error al editar el usuario");
     },
   });
 
   return (
     <Modal
-      title="Crear Nuevo Usuario"
+      title="Editar Usuario"
       open={isModalOpen}
       width="39rem"
       onCancel={handleCancel}
@@ -145,48 +149,6 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
               />
             </Form.Item>
           }
-        />
-
-        <Divider className="mt-0" />
-        <FormItemGroup
-          inputs={
-            <Form.Item
-              validateStatus={errors.password ? "error" : ""}
-              help={errors.password?.message}
-            >
-              <Controller
-                name="password"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Input.Password {...field} placeholder="Contraseña" />
-                )}
-              />
-            </Form.Item>
-          }
-          title="Contraseña"
-        />
-        <Divider className="mt-0" />
-        <FormItemGroup
-          inputs={
-            <Form.Item
-              validateStatus={errors.passwordConfirmation ? "error" : ""}
-              help={errors.passwordConfirmation?.message}
-            >
-              <Controller
-                name="passwordConfirmation"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Input.Password
-                    {...field}
-                    placeholder="Confirmación de Contraseña"
-                  />
-                )}
-              />
-            </Form.Item>
-          }
-          title="Confirmación de Contraseña"
         />
         <Divider className="mt-0" />
         <FormItemGroup
@@ -241,7 +203,7 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
               icon={<CheckOutlined />}
               loading={isPending}
             >
-              Crear Usuario
+              Editar Usuario
             </Button>
           </div>
         </Form.Item>
@@ -249,4 +211,4 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     </Modal>
   );
 };
-export default CreateUserFormModal;
+export default EditUserFormModal;

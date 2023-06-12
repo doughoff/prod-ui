@@ -1,4 +1,4 @@
-import { CreateUser, Status, User, api } from ".";
+import { CreateUser, EditUser, Status, User, api } from ".";
 const getAllUsers = (status?: Status): Promise<User[]> => {
   return new Promise((resolve, reject) => {
     const params = status ? { status } : {};
@@ -44,5 +44,36 @@ const checkEmail = (email: string): Promise<boolean> => {
       });
   });
 };
+const getUserById = (userId: string | undefined): Promise<User> => {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`/users/${userId}`)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
 
-export { getAllUsers, createUser, checkEmail };
+const editUser = (
+  params: EditUser,
+  userId: string | undefined
+): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    console.log(params);
+    api
+      .put(`/users/${userId}`, params)
+      .then((res) => {
+        console.log(res);
+        resolve(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(false);
+      });
+  });
+};
+
+export { getAllUsers, createUser, checkEmail, getUserById, editUser };

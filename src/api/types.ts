@@ -17,3 +17,10 @@ export interface CreateUser {
   password: string;
   roles: Roles[];
 }
+export interface EditUser {
+  name: string;
+  email: string;
+  password: string;
+  roles: Roles[];
+  status: Status;
+}

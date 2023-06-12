@@ -94,20 +94,20 @@ const UserListingPage: React.FC = () => {
   ];
 
   return (
-    <>
+    <div>
       <PageHeader
         items={[
           {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: "Usuários",
+            title: "Usuarios",
           },
         ]}
-        pageTitle="Usuários"
+        pageTitle="Usuarios"
       />
-      <div className="p-6">
-        <div className="flex justify-between gap-3">
+      <div className="mx-6s bg-white h-full">
+        <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
             style={{ width: 120 }}
@@ -135,7 +135,7 @@ const UserListingPage: React.FC = () => {
           setIsModalOpen={setIsModalOpen}
         />
       </div>
-    </>
+    </div>
   );
 };
 

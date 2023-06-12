@@ -11,7 +11,7 @@ import {
   ExperimentOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import { Layout, Button, theme, Dropdown, Menu } from "antd";
+import { Layout, Button, Dropdown, Menu } from "antd";
 
 import { Outlet, useNavigate, Link } from "react-router-dom";
 
@@ -23,10 +23,6 @@ const { Header, Content } = Layout;
 
 const AppTemplate: React.FC = () => {
   const navigate = useNavigate();
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
 
   React.useEffect(() => {
     const sessionID = localStorage.getItem("sessionID");
@@ -169,12 +165,10 @@ const AppTemplate: React.FC = () => {
           ]}
         />
         <Layout>
-          <Content
-            style={{
-              background: colorBgContainer,
-            }}
-          >
-            <Outlet />
+          <Content>
+            <div className="bg-gray-100 h-100">
+              <Outlet />
+            </div>
           </Content>
         </Layout>
       </Layout>

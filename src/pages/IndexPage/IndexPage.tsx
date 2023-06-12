@@ -20,6 +20,13 @@ const IndexPage: React.FC = () => {
       >
         Test
       </button>
+      <button
+        onClick={() => {
+          localStorage.removeItem("sessionID");
+        }}
+      >
+        Localstorage Clear
+      </button>
     </>
   );
 };
