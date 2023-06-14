@@ -1,47 +1,28 @@
 import React from "react";
-import { PageHeader, RoleTag, StatusTag } from "../../components";
+import { PageHeader, StatusTag, UnitTag } from "../../components";
 import { Link, useParams } from "react-router-dom";
-import { User, editUser, getUserById } from "../../api";
+import { editProduct, getProductById } from "../../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
 import dayjs from "dayjs";
-import {
-  CheckOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { EditUserFormModal } from "./EditUserForm";
-import { ResetUserPasswordFormModal } from "./ResetUserPasswordForm";
+import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { EditProductFormModal } from "./EditProductForm";
 
-const UserDetailPage: React.FC = () => {
-  const { userId } = useParams();
+const ProductDetailPage: React.FC = () => {
+  const { productId } = useParams();
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => getUserById(userId),
+    queryKey: ["product", productId],
+    queryFn: () => getProductById(productId),
   });
 
-  const userRoles = (user: User | undefined): React.ReactNode => {
-    const tags = user?.roles.map((role) => <RoleTag key={role} role={role} />);
-    if (tags?.length === 0) {
-      return <span>Sin Roles</span>;
-    }
-    return tags;
-  };
-  const isUserActive = data?.status === "ACTIVE" ?? false;
+  const isProductActive = data?.status === "ACTIVE" ?? false;
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
-  };
-
-  const [isModalOpen2, setIsModalOpen2] = React.useState(false);
-
-  const showModal2 = () => {
-    setIsModalOpen2(true);
   };
 
   return (
@@ -52,10 +33,10 @@ const UserDetailPage: React.FC = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: <Link to="/app/users">Usuarios</Link>,
+            title: <Link to="/app/products">Productos</Link>,
           },
           {
-            title: `Información de ${data?.name}`,
+            title: `Información del ${data?.name}`,
           },
         ]}
         content={
@@ -67,45 +48,48 @@ const UserDetailPage: React.FC = () => {
               <Button icon={<EditOutlined />} onClick={showModal}>
                 Editar
               </Button>
-              <Button icon={<ReloadOutlined />} onClick={showModal2}>
-                Cambiar Contraseña
-              </Button>
               {data && (
                 <Popconfirm
                   placement="bottom"
                   title={
-                    isUserActive ? "Desactivar Usuario" : "Activar Usuario"
+                    isProductActive ? "Desactivar Producto" : "Activar Producto"
                   }
-                  description="¿Está seguro que desea cambiar el estado del usuario?"
+                  description="¿Está seguro que desea cambiar el estado del producto?"
                   okText="Sí"
                   cancelText="No"
                   onConfirm={() => {
-                    editUser(
+                    editProduct(
                       {
                         name: data?.name,
-                        email: "test1234@test.com",
-                        roles: data?.roles,
-                        status: isUserActive ? "INACTIVE" : "ACTIVE",
+                        barcode: data?.barcode,
+                        batchControl: data?.batchControl,
+                        conversionFactor: data?.conversionFactor,
+                        unit: data?.unit,
+                        status: isProductActive ? "INACTIVE" : "ACTIVE",
                       },
                       data.id
                     )
                       .then(() => {
-                        message.info("Usuario actualizado correctamente");
+                        message.info("Producto actualizado correctamente");
                       })
                       .catch(() => {
-                        message.error("Error al actualizar el usuario");
+                        message.error("Error al actualizar el producto");
                       })
                       .finally(() => {
-                        queryClient.invalidateQueries({ queryKey: ["user"] });
+                        queryClient.invalidateQueries({
+                          queryKey: ["producto"],
+                        });
                       });
                   }}
                 >
                   <Button
                     type="primary"
-                    danger={isUserActive}
-                    icon={isUserActive ? <DeleteOutlined /> : <CheckOutlined />}
+                    danger={isProductActive}
+                    icon={
+                      isProductActive ? <DeleteOutlined /> : <CheckOutlined />
+                    }
                   >
-                    {isUserActive ? "Desactivar" : "Activar"}
+                    {isProductActive ? "Desactivar" : "Activar"}
                   </Button>
                 </Popconfirm>
               )}
@@ -120,33 +104,32 @@ const UserDetailPage: React.FC = () => {
           style={{ background: "white", borderRadius: "8px" }}
         >
           <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
+          <Descriptions.Item label="Codigo de Barra">
+            {data?.barcode}
+          </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
           <Descriptions.Item label="Fecha de Creación">
             {dayjs(data?.createdAt).format("DD/MM/YYYY")}
           </Descriptions.Item>
-          <Descriptions.Item label="Correo Electronico">
-            {data?.email}
+          <Descriptions.Item label="Codigo de Barra">
+            {data ? <UnitTag unit={data?.unit} /> : <></>}
           </Descriptions.Item>
-
-          <Descriptions.Item label="Rol" span={2}>
-            {userRoles(data)}
-          </Descriptions.Item>
+          {data?.description && (
+            <Descriptions.Item label="Description">
+              {data?.description}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </div>
-      <EditUserFormModal
-        userData={data}
+      <EditProductFormModal
+        productData={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-      <ResetUserPasswordFormModal
-        userData={data}
-        isModalOpen={isModalOpen2}
-        setIsModalOpen={setIsModalOpen2}
       />
     </>
   );
 };
 
-export default UserDetailPage;
+export default ProductDetailPage;

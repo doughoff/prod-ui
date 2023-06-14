@@ -54,7 +54,7 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
     debounceTimer.current = setTimeout(() => {
       checkEmail(getValues("email"))
         .then((isRegistered) => {
-          if (isRegistered) {
+          if (isRegistered && getValues("email") != userData?.email) {
             setError("email", {
               type: "manual",
               message: "El correo electrónico ya está en uso",
@@ -75,7 +75,6 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
       {
         name: data.name,
         email: data.email,
-        password: "123456",
         roles: data.roles,
         status: userData ? userData?.status : "ACTIVE",
       },
@@ -114,7 +113,7 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
               <Controller
                 name="name"
                 control={control}
-                defaultValue=""
+                defaultValue={userData?.name}
                 render={({ field }) => (
                   <Input {...field} placeholder="Nombre" />
                 )}
@@ -136,7 +135,7 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
               <Controller
                 name="email"
                 control={control}
-                defaultValue=""
+                defaultValue={userData?.email}
                 render={({ field }) => (
                   <Input
                     {...field}
@@ -160,7 +159,7 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
               <Controller
                 name="roles"
                 control={control}
-                defaultValue={[]}
+                defaultValue={userData?.roles}
                 render={({ field }) => (
                   <Select
                     mode="multiple"

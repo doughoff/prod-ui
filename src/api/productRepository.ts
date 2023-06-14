@@ -1,10 +1,9 @@
-import { CreateUser, EditUser, Status, User, api } from ".";
-
-const getAllUsers = (status?: Status): Promise<User[]> => {
+import { CreateProduct, EditProduct, Product, Status, api } from ".";
+const getAllProducts = (status?: Status): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
     const params = status ? { status } : {};
     api
-      .get("/users", { params: { ...params, limit: 1000, offset: 0 } })
+      .get("/products", { params })
       .then((res) => {
         resolve(res.data.items);
       })
@@ -13,10 +12,11 @@ const getAllUsers = (status?: Status): Promise<User[]> => {
       });
   });
 };
-const createUser = (params: CreateUser): Promise<boolean> => {
+
+const createProduct = (params: CreateProduct): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post("/users", params)
+      .post("/products", params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -28,10 +28,10 @@ const createUser = (params: CreateUser): Promise<boolean> => {
   });
 };
 
-const checkEmail = (email: string): Promise<boolean> => {
+const checkBarcode = (barcode: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .get(`/check_email/${email}`)
+      .get(`/check_barcode/${barcode}`)
       .then(() => {
         resolve(true);
       })
@@ -44,10 +44,10 @@ const checkEmail = (email: string): Promise<boolean> => {
       });
   });
 };
-const getUserById = (userId: string | undefined): Promise<User> => {
+const getProductById = (productId: string | undefined): Promise<Product> => {
   return new Promise((resolve, reject) => {
     api
-      .get(`/users/${userId}`)
+      .get(`/products/${productId}`)
       .then((res) => {
         resolve(res.data);
       })
@@ -56,19 +56,15 @@ const getUserById = (userId: string | undefined): Promise<User> => {
       });
   });
 };
-
-const editUser = (
-  params: EditUser,
-  userId: string | undefined
+const editProduct = (
+  params: EditProduct,
+  productId: string | undefined
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
-    console.log(params);
-    console.log(userId);
     api
-      .put(`/users/${userId}`, params)
+      .put(`/products/${productId}`, params)
       .then((res) => {
         console.log(res);
-
         resolve(true);
       })
       .catch((err) => {
@@ -78,4 +74,10 @@ const editUser = (
   });
 };
 
-export { getAllUsers, createUser, checkEmail, getUserById, editUser };
+export {
+  getAllProducts,
+  createProduct,
+  checkBarcode,
+  editProduct,
+  getProductById,
+};
