@@ -1,6 +1,6 @@
-export * from "./types";
-export * from "./authRepository";
-export * from "./userRepository";
-export * from "./productRepository";
-import { api, initializeApi } from "./apiClient";
-export { api, initializeApi };
+export * from './types';
+export * from './authRepository';
+export * from './userRepository';
+export * from './productRepository';
+import { api } from './apiClient';
+export { api };

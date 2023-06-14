@@ -10,7 +10,6 @@ import {
 } from "./pages";
 import AppTemplate from "./components/templates/AppTemplate";
 import React from "react";
-import { initializeApi } from "./api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProductDetailPage, ProductListingPage } from "./pages/Product";
 
@@ -75,9 +74,6 @@ const App: React.FunctionComponent = () => {
       ],
     },
   ]);
-  React.useEffect(() => {
-    initializeApi();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
