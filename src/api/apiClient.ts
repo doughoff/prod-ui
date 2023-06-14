@@ -13,3 +13,17 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('sessionID');
+      window.location.reload();
+    }
+
+    return Promise.reject(error);
+  }
+);
