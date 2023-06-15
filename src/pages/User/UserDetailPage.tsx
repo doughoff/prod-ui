@@ -32,16 +32,16 @@ const UserDetailPage: React.FC = () => {
   };
   const isUserActive = data?.status === "ACTIVE" ?? false;
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const showEditModal = () => {
+    setIsEditModalOpen(true);
   };
 
-  const [isModalOpen2, setIsModalOpen2] = React.useState(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = React.useState(false);
 
-  const showModal2 = () => {
-    setIsModalOpen2(true);
+  const showResetPasswordModal = () => {
+    setIsResetPasswordOpen(true);
   };
 
   return (
@@ -64,10 +64,13 @@ const UserDetailPage: React.FC = () => {
               {"Infromación de " + data?.name}
             </Typography.Title>
             <div className="flex gap-2">
-              <Button icon={<EditOutlined />} onClick={showModal}>
+              <Button icon={<EditOutlined />} onClick={showEditModal}>
                 Editar
               </Button>
-              <Button icon={<ReloadOutlined />} onClick={showModal2}>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={showResetPasswordModal}
+              >
                 Cambiar Contraseña
               </Button>
               {data && (
@@ -137,13 +140,13 @@ const UserDetailPage: React.FC = () => {
       </div>
       <EditUserFormModal
         userData={data}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isEditModalOpen}
+        setIsModalOpen={setIsEditModalOpen}
       />
       <ResetUserPasswordFormModal
         userData={data}
-        isModalOpen={isModalOpen2}
-        setIsModalOpen={setIsModalOpen2}
+        isModalOpen={isResetPasswordOpen}
+        setIsModalOpen={setIsResetPasswordOpen}
       />
     </>
   );

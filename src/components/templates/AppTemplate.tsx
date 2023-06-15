@@ -32,7 +32,7 @@ const AppTemplate: React.FC = () => {
   }, []);
 
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ height: "100vh" }} className="overflow-hidden">
       <Header
         style={{
           padding: "0 24px 24px",
@@ -165,10 +165,8 @@ const AppTemplate: React.FC = () => {
           ]}
         />
         <Layout>
-          <Content>
-            <div className="bg-gray-100 h-100">
-              <Outlet />
-            </div>
+          <Content className="overflow-auto bg-gray-100">
+            <Outlet />
           </Content>
         </Layout>
       </Layout>

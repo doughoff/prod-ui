@@ -1,23 +1,22 @@
 import React from "react";
-import { PageHeader, StatusTag, UnitTag } from "../../components";
+import { PageHeader, StatusTag } from "../../components";
 import { Link, useParams } from "react-router-dom";
-import { editProduct, getProductById } from "../../api";
+import { editEntities, getEntitieById } from "../../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
-import dayjs from "dayjs";
 import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { EditProductFormModal } from "./EditProductForm";
+import { EditSupplierForm } from "./EditSupplierForm";
 
-const ProductDetailPage: React.FC = () => {
-  const { productId } = useParams();
+const SupplierDetailPage: React.FC = () => {
+  const { supplierId } = useParams();
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => getProductById(productId),
+    queryKey: ["supplier", supplierId],
+    queryFn: () => getEntitieById(supplierId),
   });
 
-  const isProductActive = data?.status === "ACTIVE" ?? false;
+  const isSupplierActive = data?.status === "ACTIVE" ?? false;
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -33,7 +32,7 @@ const ProductDetailPage: React.FC = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: <Link to="/app/products">Productos</Link>,
+            title: <Link to="/app/suppliers">Proveedor</Link>,
           },
           {
             title: `Información de ${data?.name}`,
@@ -52,20 +51,20 @@ const ProductDetailPage: React.FC = () => {
                 <Popconfirm
                   placement="bottom"
                   title={
-                    isProductActive ? "Desactivar Producto" : "Activar Producto"
+                    isSupplierActive
+                      ? "Desactivar Proveedor"
+                      : "Activar Proveedor"
                   }
-                  description="¿Está seguro que desea cambiar el estado del producto?"
+                  description="¿Está seguro que desea cambiar el estado del proveedor?"
                   okText="Sí"
                   cancelText="No"
                   onConfirm={() => {
-                    editProduct(
+                    editEntities(
                       {
                         name: data?.name,
-                        barcode: data?.barcode,
-                        batchControl: data?.batchControl,
-                        conversionFactor: data?.conversionFactor,
-                        unit: data?.unit,
-                        status: isProductActive ? "INACTIVE" : "ACTIVE",
+                        ruc: data?.ruc,
+                        ci: data.ci,
+                        status: isSupplierActive ? "INACTIVE" : "ACTIVE",
                       },
                       data.id
                     )
@@ -77,19 +76,19 @@ const ProductDetailPage: React.FC = () => {
                       })
                       .finally(() => {
                         queryClient.invalidateQueries({
-                          queryKey: ["producto"],
+                          queryKey: ["supplier"],
                         });
                       });
                   }}
                 >
                   <Button
                     type="primary"
-                    danger={isProductActive}
+                    danger={isSupplierActive}
                     icon={
-                      isProductActive ? <DeleteOutlined /> : <CheckOutlined />
+                      isSupplierActive ? <DeleteOutlined /> : <CheckOutlined />
                     }
                   >
-                    {isProductActive ? "Desactivar" : "Activar"}
+                    {isSupplierActive ? "Desactivar" : "Activar"}
                   </Button>
                 </Popconfirm>
               )}
@@ -104,27 +103,15 @@ const ProductDetailPage: React.FC = () => {
           style={{ background: "white", borderRadius: "8px" }}
         >
           <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
-          <Descriptions.Item label="Codigo de Barra">
-            {data?.barcode}
-          </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
-          <Descriptions.Item label="Fecha de Creación">
-            {dayjs(data?.createdAt).format("DD/MM/YYYY")}
-          </Descriptions.Item>
-          <Descriptions.Item label="Codigo de Barra">
-            {data ? <UnitTag unit={data?.unit} /> : <></>}
-          </Descriptions.Item>
-          {data?.description && (
-            <Descriptions.Item label="Description">
-              {data?.description}
-            </Descriptions.Item>
-          )}
+          <Descriptions.Item label="RUC">{data?.ruc}</Descriptions.Item>
+          <Descriptions.Item label="CI">{data?.ci}</Descriptions.Item>
         </Descriptions>
       </div>
-      <EditProductFormModal
-        productData={data}
+      <EditSupplierForm
+        supplierData={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
@@ -132,4 +119,4 @@ const ProductDetailPage: React.FC = () => {
   );
 };
 
-export default ProductDetailPage;
+export default SupplierDetailPage;

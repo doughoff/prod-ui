@@ -1,7 +1,30 @@
-import { CreateProduct, EditProduct, Product, Status, api } from ".";
-const getAllProducts = (status?: Status): Promise<Product[]> => {
+import { Product, Status, Units, api } from ".";
+
+interface GetProducts {
+  status?: Status;
+  search?: string;
+  limit: number;
+  offset: number;
+}
+interface CreateProduct {
+  barcode: string;
+  name: string;
+  unit: Units;
+  conversionFactor: number;
+  batchControl: boolean;
+}
+
+interface EditProduct {
+  barcode: string;
+  name: string;
+  unit: Units;
+  conversionFactor: number;
+  batchControl: boolean;
+  status: Status;
+}
+
+const getProducts = (params: GetProducts): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
-    const params = status ? { status } : {};
     api
       .get("/products", { params })
       .then((res) => {
@@ -75,7 +98,7 @@ const editProduct = (
 };
 
 export {
-  getAllProducts,
+  getProducts,
   createProduct,
   checkBarcode,
   editProduct,

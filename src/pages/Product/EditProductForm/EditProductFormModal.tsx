@@ -19,8 +19,6 @@ import { Product, Units, checkBarcode, editProduct } from "../../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormItemGroup } from "../../../components";
 import { productSchema } from "../productSchema";
-import TextArea from "antd/es/input/TextArea";
-
 interface ProductFormModalProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -76,20 +74,22 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
         });
     }, 300);
   }, []);
-  const editNewProduct = React.useCallback((data: CreateProductPayloadType) => {
-    return editProduct(
-      {
-        name: data?.name,
-        barcode: data?.barcode,
-        batchControl: data?.hasBatch,
-        conversionFactor: data?.conversionFactor,
-        description: data.description ? data.description : undefined,
-        unit: data?.unit,
-        status: isProductActive ? "ACTIVE" : "INACTIVE",
-      },
-      productData?.id
-    );
-  }, []);
+  const editNewProduct = React.useCallback(
+    (data: CreateProductPayloadType) => {
+      return editProduct(
+        {
+          name: data?.name,
+          barcode: data?.barcode,
+          batchControl: data?.hasBatch,
+          conversionFactor: data?.conversionFactor,
+          unit: data?.unit,
+          status: isProductActive ? "ACTIVE" : "INACTIVE",
+        },
+        productData?.id
+      );
+    },
+    [productData]
+  );
   const { isPending, mutate } = useMutation({
     mutationFn: editNewProduct,
     onSuccess: () => {
@@ -153,29 +153,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Código de Barras"
         />
-        <FormItemGroup
-          inputs={
-            <Form.Item
-              validateStatus={errors.description ? "error" : ""}
-              help={errors.description?.message}
-            >
-              <Controller
-                name="description"
-                control={control}
-                defaultValue={productData?.description}
-                render={({ field }) => (
-                  <TextArea
-                    {...field}
-                    showCount
-                    maxLength={200}
-                    placeholder="Descripción"
-                  />
-                )}
-              />
-            </Form.Item>
-          }
-          title="Descripción"
-        />
+
         <FormItemGroup
           inputs={
             <Form.Item

@@ -12,6 +12,7 @@ import AppTemplate from "./components/templates/AppTemplate";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProductDetailPage, ProductListingPage } from "./pages/Product";
+import { SupplierDetailPage, SupplierListingPage } from "./pages/Supplier";
 
 const App: React.FunctionComponent = () => {
   const queryClient = new QueryClient({
@@ -68,6 +69,19 @@ const App: React.FunctionComponent = () => {
             {
               path: "/app/products/info/:productId",
               element: <ProductDetailPage />,
+            },
+          ],
+        },
+        {
+          path: "/app/suppliers",
+          children: [
+            {
+              path: "/app/suppliers",
+              element: <SupplierListingPage />,
+            },
+            {
+              path: "/app/suppliers/info/:supplierId",
+              element: <SupplierDetailPage />,
             },
           ],
         },

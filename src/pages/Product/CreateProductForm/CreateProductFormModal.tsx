@@ -2,6 +2,7 @@ import * as z from "zod";
 import {
   Button,
   Checkbox,
+  Divider,
   Form,
   Input,
   InputNumber,
@@ -17,7 +18,6 @@ import { productSchema } from "../productSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createProduct, checkBarcode } from "../../../api/productRepository";
-import TextArea from "antd/es/input/TextArea";
 import { CheckOutlined } from "@ant-design/icons";
 
 interface ProductFormModalProps {
@@ -31,7 +31,10 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
   setIsModalOpen,
 }) => {
   const queryClient = useQueryClient();
-
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    reset();
+  };
   const {
     control,
     handleSubmit,
@@ -39,6 +42,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
     getValues,
     setError,
     clearErrors,
+    reset,
   } = useForm<CreateProductPayloadType>({
     resolver: zodResolver(productSchema),
   });
@@ -75,7 +79,6 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
         conversionFactor: data.conversionFactor,
         batchControl: data.hasBatch,
         unit: data.unit,
-        description: data.description ? data.description : undefined,
       });
     },
     []
@@ -84,6 +87,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
   const { isPending, mutate } = useMutation({
     mutationFn: createNewProduct,
     onSuccess: () => {
+      reset();
       message.success("Producto creado correctamente");
       queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsModalOpen(false);
@@ -92,14 +96,17 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
       message.error("Error al crear   producto");
     },
   });
+
   return (
     <Modal
       title="Crear Nuevo Producto"
       open={isModalOpen}
       width="42rem"
+      onCancel={handleCancel}
       footer={null}
     >
       <Form layout="vertical" onFinish={handleSubmit((data) => mutate(data))}>
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -118,6 +125,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Nombre"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -142,29 +150,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Código de Barras"
         />
-        <FormItemGroup
-          inputs={
-            <Form.Item
-              validateStatus={errors.description ? "error" : ""}
-              help={errors.description?.message}
-            >
-              <Controller
-                name="description"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextArea
-                    {...field}
-                    showCount
-                    maxLength={200}
-                    placeholder="Descripción"
-                  />
-                )}
-              />
-            </Form.Item>
-          }
-          title="Descripción"
-        />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -175,10 +161,10 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
               <Controller
                 name="unit"
                 control={control}
-                defaultValue={"UNIT"}
+                defaultValue={"UNITS"}
                 render={({ field }) => (
                   <Radio.Group {...field}>
-                    <Radio.Button value={"UNIT" as Units}>Unidad</Radio.Button>
+                    <Radio.Button value={"UNITS" as Units}>Unidad</Radio.Button>
                     <Radio.Button value={"KG" as Units}>
                       Kilogramos
                     </Radio.Button>
@@ -191,6 +177,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -210,6 +197,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Factor de Conversión de Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item>
@@ -232,13 +220,16 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Configuraciones adicionales"
         />
-
+        <Divider className="mt-0" />
         <Form.Item className="pt-3">
           <div className="flex justify-end">
             <Button
               className="mr-2"
               disabled={isPending}
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                reset();
+                setIsModalOpen(false);
+              }}
             >
               Cancelar
             </Button>

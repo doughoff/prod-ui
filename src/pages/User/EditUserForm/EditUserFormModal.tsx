@@ -70,17 +70,22 @@ const EditUserFormModal: React.FC<UserFormModalProps> = ({
         });
     }, 300);
   }, []);
-  const editNewUser = React.useCallback((data: PartialUserPayloadType) => {
-    return editUser(
-      {
-        name: data.name,
-        email: data.email,
-        roles: data.roles,
-        status: userData ? userData?.status : "ACTIVE",
-      },
-      userData?.id
-    );
-  }, []);
+
+  const editNewUser = React.useCallback(
+    (data: PartialUserPayloadType) => {
+      return editUser(
+        {
+          name: data.name,
+          email: data.email,
+          roles: data.roles,
+          status: userData ? userData?.status : "ACTIVE",
+        },
+        userData?.id
+      );
+    },
+    [userData]
+  );
+
   const { isPending, mutate } = useMutation({
     mutationFn: editNewUser,
     onSuccess: () => {

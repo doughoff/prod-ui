@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PageHeader, RoleTag, StatusTag } from "../../components";
 import dayjs from "dayjs";
-import { Status, User, getAllUsers } from "../../api";
+import { Status, User, getUsers } from "../../api";
 import { ColumnsType } from "antd/es/table";
 import { Button, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
@@ -29,14 +29,11 @@ const UserListingPage: React.FC = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["users", filter],
-    queryFn: () => getAllUsers(filter),
+    queryFn: () => getUsers({ status: filter, limit: 200, offset: 0 }),
   });
 
   const handleChange = (value: string | Status) => {
-    if (value != "ALL") {
-      return setFilter(value as Status);
-    }
-    return setFilter(undefined);
+    return setFilter(value as Status);
   };
 
   const columns: ColumnsType<User> = [
@@ -115,7 +112,7 @@ const UserListingPage: React.FC = () => {
             options={[
               { value: "ACTIVE", label: "Activos" },
               { value: "INACTIVE", label: "Inactivos" },
-              { value: "ALL", label: "Todos" },
+              { value: "ACTIVE,INACTIVE", label: "Todos" },
             ]}
           />
           <Button icon={<PlusOutlined />} onClick={showModal}>

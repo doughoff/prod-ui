@@ -1,10 +1,28 @@
-import { CreateUser, EditUser, Status, User, api } from ".";
+import { Roles, Status, User, api } from ".";
 
-const getAllUsers = (status?: Status): Promise<User[]> => {
+interface GetUsers {
+  status?: Status;
+  search?: string;
+  limit: number;
+  offset: number;
+}
+interface CreateUser {
+  name: string;
+  email: string;
+  password: string;
+  roles: Roles[];
+}
+interface EditUser {
+  name: string;
+  email: string;
+  roles: Roles[];
+  status: Status;
+}
+
+const getUsers = (params: GetUsers): Promise<User[]> => {
   return new Promise((resolve, reject) => {
-    const params = status ? { status } : {};
     api
-      .get("/users", { params: { ...params, limit: 1000, offset: 0 } })
+      .get("/users", { params })
       .then((res) => {
         resolve(res.data.items);
       })
@@ -78,4 +96,4 @@ const editUser = (
   });
 };
 
-export { getAllUsers, createUser, checkEmail, getUserById, editUser };
+export { getUsers, createUser, checkEmail, getUserById, editUser };

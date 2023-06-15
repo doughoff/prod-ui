@@ -1,17 +1,18 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PageHeader, StatusTag, UnitTag } from "../../components";
+import { PageHeader, StatusTag } from "../../components";
 import dayjs from "dayjs";
-import { Product, Status, getProducts } from "../../api";
+import { Entities, Status, getEntitites } from "../../api";
 import { ColumnsType } from "antd/es/table";
 import { Button, Input, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useQuery } from "@tanstack/react-query";
-import { CreateProductFormModal } from "./CreateProductForm";
+import { CreateSupplierFormModal } from "./CreateSupplierForm";
 
-const ProductListingPage: React.FC = () => {
+const SupplierListingPage: React.FC = () => {
   const navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const showModal = () => {
@@ -23,16 +24,16 @@ const ProductListingPage: React.FC = () => {
   const [searching, setSearching] = React.useState<boolean>(true);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", filter, searching],
+    queryKey: ["suppliers", filter, searching],
     queryFn: () =>
-      getProducts({ status: filter, limit: 10, offset: 0, search: search }),
+      getEntitites({ status: filter, limit: 200, offset: 0, search: search }),
   });
 
   const handleChange = (value: string | Status) => {
     return setFilter(value as Status);
   };
 
-  const columns: ColumnsType<Product> = [
+  const columns: ColumnsType<Entities> = [
     {
       title: "Fecha de creación",
       dataIndex: "createdAt",
@@ -45,48 +46,31 @@ const ProductListingPage: React.FC = () => {
     {
       title: "Estado",
       dataIndex: "status",
-      width: 80,
+      width: 150,
       key: "status",
       render: (_, row) => {
         return <StatusTag status={row.status as Status} />;
       },
     },
     {
-      title: "Código de barras",
-      dataIndex: "barcode",
-      align: "right",
-      width: 200,
-      key: "barcode",
-    },
-    {
       title: "Nombre",
       dataIndex: "name",
+      width: 200,
       key: "name",
     },
     {
-      title: "Lotes",
-      dataIndex: "batchControl",
-      key: "batchControl",
-      width: 100,
-      render: (_, row) => {
-        return row.batchControl ? "Si" : "No";
-      },
-    },
-    {
-      title: "Und.",
-      dataIndex: "unit",
-      key: "unit",
-      width: 100,
-      render: (_, row) => {
-        return <UnitTag unit={row.unit} />;
-      },
-    },
-    {
-      title: "Fact. de conversión",
-      dataIndex: "conversionFactor",
+      title: "RUC",
+      dataIndex: "ruc",
       align: "right",
-      key: "conversionFactor",
-      width: 100,
+      width: 130,
+      key: "RUC",
+    },
+    {
+      title: "CI",
+      dataIndex: "ci",
+      align: "right",
+      width: 130,
+      key: "CI",
     },
     {
       title: "Acciones",
@@ -98,7 +82,7 @@ const ProductListingPage: React.FC = () => {
           type="link"
           size="small"
           onClick={() => {
-            navigate(`/app/products/info/${row.id}`);
+            navigate(`/app/suppliers/info/${row.id}`);
           }}
           icon={<EyeOutlined />}
         />
@@ -114,10 +98,10 @@ const ProductListingPage: React.FC = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: "Productos",
+            title: "Proveedores",
           },
         ]}
-        pageTitle="Productos"
+        pageTitle="Proveedores"
       />
       <div className="mx-6s bg-white h-full">
         <div className="flex justify-between gap-3 ">
@@ -132,13 +116,13 @@ const ProductListingPage: React.FC = () => {
             ]}
           />
           <Input.Search
-            placeholder="Buscar Productos"
+            placeholder="Buscar Proveedor"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onSearch={() => setSearching(!searching)}
           />
           <Button icon={<PlusOutlined />} onClick={showModal}>
-            Nuevo Producto
+            Nuevo Proveedor
           </Button>
         </div>
         <Table
@@ -149,7 +133,7 @@ const ProductListingPage: React.FC = () => {
           columns={columns}
           dataSource={data}
         />
-        <CreateProductFormModal
+        <CreateSupplierFormModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
@@ -158,4 +142,4 @@ const ProductListingPage: React.FC = () => {
   );
 };
 
-export default ProductListingPage;
+export default SupplierListingPage;

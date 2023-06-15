@@ -35,12 +35,14 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     getValues,
     setError,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<UserPayloadType>({
     resolver: zodResolver(userSchemaWithPasswordValidation),
   });
   const handleCancel = () => {
     setIsModalOpen(false);
+    reset();
   };
 
   const queryClient = useQueryClient();
@@ -82,6 +84,7 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     mutationFn: createNewUser,
     onSuccess: () => {
       message.success("Usuario creado correctamente");
+      reset();
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsModalOpen(false);
     },
@@ -231,7 +234,10 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
             <Button
               className="mr-2"
               disabled={isPending}
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                reset();
+                setIsModalOpen(false);
+              }}
             >
               Cancelar
             </Button>
