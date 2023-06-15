@@ -1,0 +1,13 @@
+.arrow-menu {
+  /* Set the initial transform property */
+  transform: rotate(0deg);
+  /* Define the transition properties */
+  transition-property: transform;
+  transition-duration: 1s;
+  transition-timing-function: ease;
+}
+
+.arrow-menu.item-expanded {
+  /* Move the element on hover */
+  transform: rotate(-180deg);
+}
