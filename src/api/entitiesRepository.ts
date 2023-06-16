@@ -1,7 +1,7 @@
 import { Entities, Status, api } from ".";
 
 interface GetEntitites {
-  status?: Status;
+  status?: Status | string;
   search?: string;
   limit: number;
   offset: number;

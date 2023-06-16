@@ -1,6 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PageHeader, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageContent,
+  PageHeader,
+  StatusTag,
+} from "../../components";
 import dayjs from "dayjs";
 import { Entities, Status, getEntitites } from "../../api";
 import { ColumnsType } from "antd/es/table";
@@ -40,7 +45,7 @@ const SupplierListingPage: React.FC = () => {
       key: "createdAt",
       width: 100,
       render: (_, row) => (
-        <span>{dayjs(row.createdAt).format("DD/MM/YYYY")}</span>
+        <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
       ),
     },
     {
@@ -64,6 +69,7 @@ const SupplierListingPage: React.FC = () => {
       align: "right",
       width: 130,
       key: "RUC",
+      render: (_, row) => <NumberText value={row.ruc} />,
     },
     {
       title: "CI",
@@ -71,6 +77,7 @@ const SupplierListingPage: React.FC = () => {
       align: "right",
       width: 130,
       key: "CI",
+      render: (_, row) => <NumberText value={row.ci} />,
     },
     {
       title: "Acciones",
@@ -91,7 +98,7 @@ const SupplierListingPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <>
       <PageHeader
         items={[
           {
@@ -103,7 +110,7 @@ const SupplierListingPage: React.FC = () => {
         ]}
         pageTitle="Proveedores"
       />
-      <div className="mx-6s bg-white h-full">
+      <PageContent>
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
@@ -137,8 +144,8 @@ const SupplierListingPage: React.FC = () => {
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-      </div>
-    </div>
+      </PageContent>
+    </>
   );
 };
 

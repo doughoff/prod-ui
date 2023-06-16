@@ -1,5 +1,11 @@
 import React from "react";
-import { PageHeader, RoleTag, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageDetails,
+  PageHeader,
+  RoleTag,
+  StatusTag,
+} from "../../components";
 import { Link, useParams } from "react-router-dom";
 import { User, editUser, getUserById } from "../../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -116,18 +122,15 @@ const UserDetailPage: React.FC = () => {
           </div>
         }
       />
-      <div className="px-6">
-        <Descriptions
-          bordered
-          column={1}
-          style={{ background: "white", borderRadius: "8px" }}
-        >
+
+      <PageDetails>
+        <Descriptions bordered column={1}>
           <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
           <Descriptions.Item label="Fecha de Creación">
-            {dayjs(data?.createdAt).format("DD/MM/YYYY")}
+            <NumberText value={dayjs(data?.createdAt).format("DD/MM/YYYY")} />
           </Descriptions.Item>
           <Descriptions.Item label="Correo Electronico">
             {data?.email}
@@ -137,7 +140,7 @@ const UserDetailPage: React.FC = () => {
             {userRoles(data)}
           </Descriptions.Item>
         </Descriptions>
-      </div>
+      </PageDetails>
       <EditUserFormModal
         userData={data}
         isModalOpen={isEditModalOpen}

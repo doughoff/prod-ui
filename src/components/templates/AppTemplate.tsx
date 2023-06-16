@@ -165,7 +165,7 @@ const AppTemplate: React.FC = () => {
           ]}
         />
         <Layout>
-          <Content className="overflow-auto bg-gray-100">
+          <Content className="bg-gray-100 overflow-auto flex flex-col ">
             <Outlet />
           </Content>
         </Layout>

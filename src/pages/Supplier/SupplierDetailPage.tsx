@@ -1,11 +1,17 @@
 import React from "react";
-import { PageHeader, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageDetails,
+  PageHeader,
+  StatusTag,
+} from "../../components";
 import { Link, useParams } from "react-router-dom";
 import { editEntities, getEntitieById } from "../../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
 import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { EditSupplierForm } from "./EditSupplierForm";
+import dayjs from "dayjs";
 
 const SupplierDetailPage: React.FC = () => {
   const { supplierId } = useParams();
@@ -96,20 +102,27 @@ const SupplierDetailPage: React.FC = () => {
           </div>
         }
       />
-      <div className="px-6">
+      <PageDetails>
         <Descriptions
           bordered
           column={1}
           style={{ background: "white", borderRadius: "8px" }}
         >
           <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
+          <Descriptions.Item label="Fecha de Creación">
+            <NumberText value={dayjs(data?.createdAt).format("DD/MM/YYYY")} />
+          </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
-          <Descriptions.Item label="RUC">{data?.ruc}</Descriptions.Item>
-          <Descriptions.Item label="CI">{data?.ci}</Descriptions.Item>
+          <Descriptions.Item label="RUC">
+            <NumberText value={data?.ruc} />
+          </Descriptions.Item>
+          <Descriptions.Item label="CI">
+            <NumberText value={data?.ci} />
+          </Descriptions.Item>
         </Descriptions>
-      </div>
+      </PageDetails>
       <EditSupplierForm
         supplierData={data}
         isModalOpen={isModalOpen}

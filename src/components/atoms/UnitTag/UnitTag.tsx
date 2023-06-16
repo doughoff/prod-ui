@@ -8,7 +8,7 @@ export interface Props {
 }
 
 const UnitTag: React.FC<Props> = ({ unit, className }) => {
-  if (unit === "UNIT") {
+  if (unit === "UNITS") {
     return (
       <Tag className={className} color="default">
         <strong>UNIDAD</strong>

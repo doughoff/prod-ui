@@ -15,7 +15,7 @@ const PageHeader: React.FunctionComponent<Props> = ({
   content,
 }) => {
   return (
-    <div className="px-6 py-2 ">
+    <div className="px-6 py-2">
       <Breadcrumb
         style={{ margin: "24px 0" }}
         items={items.map((item) => ({

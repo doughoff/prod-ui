@@ -1,5 +1,11 @@
 import React from "react";
-import { PageHeader, StatusTag, UnitTag } from "../../components";
+import {
+  NumberText,
+  PageDetails,
+  PageHeader,
+  StatusTag,
+  UnitTag,
+} from "../../components";
 import { Link, useParams } from "react-router-dom";
 import { editProduct, getProductById } from "../../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -97,7 +103,7 @@ const ProductDetailPage: React.FC = () => {
           </div>
         }
       />
-      <div className="px-6">
+      <PageDetails>
         <Descriptions
           bordered
           column={1}
@@ -105,24 +111,34 @@ const ProductDetailPage: React.FC = () => {
         >
           <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
           <Descriptions.Item label="Codigo de Barra">
-            {data?.barcode}
+            <NumberText value={data?.barcode} />
           </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
-          <Descriptions.Item label="Fecha de Creación">
-            {dayjs(data?.createdAt).format("DD/MM/YYYY")}
+          <Descriptions.Item label="Cantidad">
+            <NumberText
+              value={data?.stock}
+              format="unit"
+              unit={data?.unit}
+              position="right"
+            />
           </Descriptions.Item>
-          <Descriptions.Item label="Codigo de Barra">
+          <Descriptions.Item label="Precio Promedio">
+            <NumberText
+              value={data?.averageCost}
+              format="currency"
+              position="right"
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Fecha de Creación">
+            <NumberText value={dayjs(data?.createdAt).format("DD/MM/YYYY")} />
+          </Descriptions.Item>
+          <Descriptions.Item label="Unidad">
             {data ? <UnitTag unit={data?.unit} /> : <></>}
           </Descriptions.Item>
-          {data?.description && (
-            <Descriptions.Item label="Description">
-              {data?.description}
-            </Descriptions.Item>
-          )}
         </Descriptions>
-      </div>
+      </PageDetails>
       <EditProductFormModal
         productData={data}
         isModalOpen={isModalOpen}

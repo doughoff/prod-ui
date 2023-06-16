@@ -21,6 +21,8 @@ export interface Product {
   conversionFactor: number;
   batchControl: boolean;
   description?: string;
+  stock: number;
+  averageCost: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,4 +34,28 @@ export interface Entities {
   ruc?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+export interface Recipe {
+  recipeId: string;
+  recipeGroupId: string;
+  status: Status;
+  name: string;
+  productId: string;
+  productName: string;
+  productUnit: Units;
+  producedQuantity: number;
+  revision: number;
+  isCurrent: boolean;
+  createdByUserId: string;
+  createdByUserName: string;
+  ingredients: Ingredient[];
+  createdAt: Date;
+}
+export interface Ingredient {
+  id: string;
+  productId: string;
+  productName: string;
+  productUnit: Units;
+  recipeId: string;
+  quantity: number;
 }

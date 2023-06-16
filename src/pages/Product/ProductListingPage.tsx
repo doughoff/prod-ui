@@ -1,6 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PageHeader, StatusTag, UnitTag } from "../../components";
+import {
+  NumberText,
+  PageContent,
+  PageHeader,
+  StatusTag,
+} from "../../components";
 import dayjs from "dayjs";
 import { Product, Status, getProducts } from "../../api";
 import { ColumnsType } from "antd/es/table";
@@ -39,7 +44,7 @@ const ProductListingPage: React.FC = () => {
       key: "createdAt",
       width: 100,
       render: (_, row) => (
-        <span>{dayjs(row.createdAt).format("DD/MM/YYYY")}</span>
+        <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
       ),
     },
     {
@@ -52,16 +57,55 @@ const ProductListingPage: React.FC = () => {
       },
     },
     {
+      title: "Nombre",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
       title: "Código de barras",
       dataIndex: "barcode",
       align: "right",
       width: 200,
       key: "barcode",
+      render: (_, row) => <NumberText value={row?.barcode} />,
+    },
+
+    {
+      title: "Cantidad",
+      dataIndex: "stock",
+      align: "right",
+      key: "stock",
+      width: 100,
+      render: (_, row) => (
+        <NumberText
+          value={row?.stock}
+          format="unit"
+          unit={row?.unit}
+          position="right"
+        />
+      ),
     },
     {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
+      title: "Precio Promedio",
+      dataIndex: "averageCost",
+      align: "right",
+      key: "averageCost",
+      width: 100,
+      render: (_, row) => (
+        <NumberText
+          value={row?.averageCost}
+          format="currency"
+          position="right"
+        />
+      ),
+    },
+    {
+      title: "Fact. de conversión",
+      dataIndex: "conversionFactor",
+      align: "right",
+      key: "conversionFactor",
+      width: 100,
+      render: (_, row) => <NumberText value={row?.conversionFactor} />,
     },
     {
       title: "Lotes",
@@ -73,26 +117,11 @@ const ProductListingPage: React.FC = () => {
       },
     },
     {
-      title: "Und.",
-      dataIndex: "unit",
-      key: "unit",
-      width: 100,
-      render: (_, row) => {
-        return <UnitTag unit={row.unit} />;
-      },
-    },
-    {
-      title: "Fact. de conversión",
-      dataIndex: "conversionFactor",
-      align: "right",
-      key: "conversionFactor",
-      width: 100,
-    },
-    {
       title: "Acciones",
       dataIndex: "actions",
       key: "actions",
       width: 100,
+      align: "center",
       render: (_, row) => (
         <Button
           type="link"
@@ -107,7 +136,7 @@ const ProductListingPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <>
       <PageHeader
         items={[
           {
@@ -119,7 +148,7 @@ const ProductListingPage: React.FC = () => {
         ]}
         pageTitle="Productos"
       />
-      <div className="mx-6s bg-white h-full">
+      <PageContent>
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
@@ -153,8 +182,8 @@ const ProductListingPage: React.FC = () => {
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-      </div>
-    </div>
+      </PageContent>
+    </>
   );
 };
 

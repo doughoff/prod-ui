@@ -1,6 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PageHeader, RoleTag, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageContent,
+  PageHeader,
+  RoleTag,
+  StatusTag,
+} from "../../components";
 import dayjs from "dayjs";
 import { Status, User, getUsers } from "../../api";
 import { ColumnsType } from "antd/es/table";
@@ -43,7 +49,7 @@ const UserListingPage: React.FC = () => {
       key: "createdAt",
       width: 150,
       render: (_, row) => (
-        <span>{dayjs(row.createdAt).format("DD/MM/YYYY")}</span>
+        <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
       ),
     },
     {
@@ -91,7 +97,7 @@ const UserListingPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <>
       <PageHeader
         items={[
           {
@@ -103,7 +109,8 @@ const UserListingPage: React.FC = () => {
         ]}
         pageTitle="Usuarios"
       />
-      <div className="mx-6s bg-white h-full">
+
+      <PageContent>
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
@@ -131,8 +138,8 @@ const UserListingPage: React.FC = () => {
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-      </div>
-    </div>
+      </PageContent>
+    </>
   );
 };
 
