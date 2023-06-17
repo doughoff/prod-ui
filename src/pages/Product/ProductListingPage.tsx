@@ -23,18 +23,27 @@ const ProductListingPage: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
-  const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
+  const [selectedStatus, setSelectedStatus] = React.useState<Status | "ALL">("ACTIVE");
   const [search, setSearch] = React.useState<string | undefined>(undefined);
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["products", filter],
-    queryFn: () =>
-      getProducts({ status: filter, limit: 10, offset: 0, search: search }),
+    queryKey: ["products", selectedStatus],
+    queryFn: () => {
+      let statusOptions: Status[] = [];
+      if (selectedStatus === "ALL") {
+        statusOptions = ["ACTIVE", "INACTIVE"];
+      }
+      else {
+        statusOptions = [selectedStatus];
+      }
+
+      return getProducts({ status: statusOptions, limit: 10, offset: 0, search: search })
+    },
     enabled: false,
   });
 
   const handleChange = (value: string | Status) => {
-    return setFilter(value as Status);
+    return setSelectedStatus(value as Status);
   };
 
   const columns: ColumnsType<Product> = [
@@ -157,7 +166,7 @@ const ProductListingPage: React.FC = () => {
             options={[
               { value: "ACTIVE", label: "Activos" },
               { value: "INACTIVE", label: "Inactivos" },
-              { value: "ACTIVE,INACTIVE", label: "Todos" },
+              { value: "ALL", label: "Todos" },
             ]}
           />
           <Input.Search
