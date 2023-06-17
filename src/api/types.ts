@@ -1,6 +1,6 @@
-export type Status = "ACTIVE" | "INACTIVE";
-export type Roles = "ADMIN" | "OPERATOR";
-export type Units = "UNITS" | "KG" | "L" | "OTHER";
+export type Status = 'ACTIVE' | 'INACTIVE';
+export type Roles = 'ADMIN' | 'OPERATOR';
+export type Units = 'UNITS' | 'KG' | 'L' | 'OTHER';
 
 export interface User {
   id: string;
@@ -12,6 +12,7 @@ export interface User {
   updatedAt: Date;
   roles: Roles[];
 }
+
 export interface Product {
   id: string;
   status: Status;
@@ -26,6 +27,7 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
 }
+
 export interface Entities {
   id: string;
   status: Status;
@@ -35,6 +37,7 @@ export interface Entities {
   createdAt: Date;
   updatedAt: Date;
 }
+
 export interface Recipe {
   recipeId: string;
   recipeGroupId: string;
@@ -51,6 +54,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   createdAt: Date;
 }
+
 export interface Ingredient {
   id: string;
   productId: string;

@@ -17,20 +17,20 @@ import { CreateProductFormModal } from "./CreateProductForm";
 
 const ProductListingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const showCreateProductModal = () => {
+    setIsCreateModalOpen(true);
   };
 
   const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
   const [search, setSearch] = React.useState<string | undefined>(undefined);
-  const [searching, setSearching] = React.useState<boolean>(true);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["products", filter, searching],
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["products", filter],
     queryFn: () =>
       getProducts({ status: filter, limit: 10, offset: 0, search: search }),
+    enabled: false,
   });
 
   const handleChange = (value: string | Status) => {
@@ -164,9 +164,9 @@ const ProductListingPage: React.FC = () => {
             placeholder="Buscar Productos"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onSearch={() => setSearching(!searching)}
+            onSearch={() => refetch()}
           />
-          <Button icon={<PlusOutlined />} onClick={showModal}>
+          <Button icon={<PlusOutlined />} onClick={showCreateProductModal}>
             Nuevo Producto
           </Button>
         </div>
@@ -179,8 +179,10 @@ const ProductListingPage: React.FC = () => {
           dataSource={data}
         />
         <CreateProductFormModal
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          isModalOpen={isCreateModalOpen}
+          onCancel={() => {
+            setIsCreateModalOpen(false);
+          }}
         />
       </PageContent>
     </>
