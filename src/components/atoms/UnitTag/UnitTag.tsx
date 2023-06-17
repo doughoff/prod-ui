@@ -1,9 +1,9 @@
 import React from "react";
 import { Tag } from "antd";
-import { Units } from "../../../api";
+import { Unit } from "../../../api";
 
 export interface Props {
-  unit: Units;
+  unit: Unit;
   className?: string;
 }
 

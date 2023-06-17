@@ -1,7 +1,7 @@
-import { Product, Status, Units, api } from ".";
+import { Product, Status, Unit, api } from '.';
 
 interface GetProducts {
-  status?: Status | string;
+  status?: Status[];
   search?: string;
   limit: number;
   offset: number;
@@ -9,7 +9,7 @@ interface GetProducts {
 interface CreateProduct {
   barcode: string;
   name: string;
-  unit: Units;
+  unit: Unit;
   conversionFactor: number;
   batchControl: boolean;
 }
@@ -17,7 +17,7 @@ interface CreateProduct {
 interface EditProduct {
   barcode: string;
   name: string;
-  unit: Units;
+  unit: Unit;
   conversionFactor: number;
   batchControl: boolean;
   status: Status;
@@ -26,7 +26,12 @@ interface EditProduct {
 const getProducts = (params: GetProducts): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
     api
-      .get("/products", { params })
+      .get('/products', {
+        params: {
+          ...params,
+          status: params.status?.join(','),
+        },
+      })
       .then((res) => {
         resolve(res.data.items);
       })
@@ -39,7 +44,7 @@ const getProducts = (params: GetProducts): Promise<Product[]> => {
 const createProduct = (params: CreateProduct): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post("/products", params)
+      .post('/products', params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -59,7 +64,7 @@ const checkBarcode = (barcode: string): Promise<boolean> => {
         resolve(true);
       })
       .catch((err) => {
-        if (err.code == "ERR_BAD_REQUEST") {
+        if (err.code == 'ERR_BAD_REQUEST') {
           resolve(false);
         } else {
           reject(err);

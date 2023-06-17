@@ -1,4 +1,4 @@
-import { Roles, Status, User, api } from ".";
+import { Role, Status, User, api } from '.';
 
 interface GetUsers {
   status?: Status;
@@ -10,19 +10,19 @@ interface CreateUser {
   name: string;
   email: string;
   password: string;
-  roles: Roles[];
+  roles: Role[];
 }
 interface EditUser {
   name: string;
   email: string;
-  roles: Roles[];
+  roles: Role[];
   status: Status;
 }
 
 const getUsers = (params: GetUsers): Promise<User[]> => {
   return new Promise((resolve, reject) => {
     api
-      .get("/users", { params })
+      .get('/users', { params })
       .then((res) => {
         resolve(res.data.items);
       })
@@ -34,7 +34,7 @@ const getUsers = (params: GetUsers): Promise<User[]> => {
 const createUser = (params: CreateUser): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post("/users", params)
+      .post('/users', params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -54,7 +54,7 @@ const checkEmail = (email: string): Promise<boolean> => {
         resolve(true);
       })
       .catch((err) => {
-        if (err.code == "ERR_BAD_REQUEST") {
+        if (err.code == 'ERR_BAD_REQUEST') {
           resolve(false);
         } else {
           reject(err);

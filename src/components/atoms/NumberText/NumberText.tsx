@@ -1,11 +1,11 @@
 import React from "react";
 import { currencyFormatter, unitFormatter } from "../../../utils/formatters";
-import { Units } from "../../../api";
+import { Unit } from "../../../api";
 
 export interface Props {
   value: string | number | undefined;
   format?: "currency" | "unit";
-  unit?: Units;
+  unit?: Unit;
   position?: "left" | "right";
 }
 

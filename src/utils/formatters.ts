@@ -1,73 +1,73 @@
-import { Units } from "../api";
+import { Unit } from '../api';
 
 export function currencyParser(value: string | undefined): number {
-  const parsed = parseInt(value?.replace(/[^0-9]/g, "") ?? "");
+  const parsed = parseInt(value?.replace(/[^0-9]/g, '') ?? '');
   if (Number.isNaN(parsed)) return 0;
   return parsed;
 }
 
 export function currencyFormatter(
   value: string | number | undefined,
-  position: "right" | "left" = "right"
+  position: 'right' | 'left' = 'right'
 ): string {
-  const fmt = value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return position === "left" ? `Gs. ${fmt}` : `${fmt} Gs.`;
+  const fmt = value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return position === 'left' ? `Gs. ${fmt}` : `${fmt} Gs.`;
 }
 
 export function unitFormatter(
   value: number | undefined,
-  unit?: Units | undefined,
-  position?: "left" | "right"
+  unit?: Unit | undefined,
+  position?: 'left' | 'right'
 ): string {
-  if (position == "right") {
+  if (position == 'right') {
     switch (unit) {
-      case "KG":
+      case 'KG':
         return `${value?.toFixed(3)} KG`;
-      case "L":
+      case 'L':
         return `${value?.toFixed(3)}  L`;
-      case "UNITS":
+      case 'UNITS':
         return `${value?.toFixed(3)} Un`;
       default:
         return ``;
     }
   }
-  if (position == "left") {
+  if (position == 'left') {
     switch (unit) {
-      case "KG":
+      case 'KG':
         return `KG  ${value?.toFixed(3)}`;
-      case "L":
+      case 'L':
         return `L  ${value?.toFixed(3)}`;
-      case "UNITS":
+      case 'UNITS':
         return `Un ${value?.toFixed(3)}`;
       default:
         return ``;
     }
   }
-  return "";
+  return '';
 }
 
 export function unitMapper(
-  unit?: Units | undefined,
+  unit?: Unit | undefined,
   isPlural?: boolean
 ): string {
   if (!isPlural) {
     switch (unit) {
-      case "KG":
+      case 'KG':
         return `Kilogramo`;
-      case "L":
+      case 'L':
         return `Litro`;
-      case "UNITS":
+      case 'UNITS':
         return `Unidad`;
       default:
         return ``;
     }
   } else {
     switch (unit) {
-      case "KG":
+      case 'KG':
         return `Kilogramos`;
-      case "L":
+      case 'L':
         return `Litros`;
-      case "UNITS":
+      case 'UNITS':
         return `Unidad`;
       default:
         return ``;

@@ -13,7 +13,7 @@ import {
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FormItemGroup } from "../../../components";
-import { Units } from "../../../api";
+import { Unit } from "../../../api";
 import { productSchema } from "../productSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -167,12 +167,12 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
                 defaultValue={"UNITS"}
                 render={({ field }) => (
                   <Radio.Group {...field}>
-                    <Radio.Button value={"UNITS" as Units}>Unidad</Radio.Button>
-                    <Radio.Button value={"KG" as Units}>
+                    <Radio.Button value={"UNITS" as Unit}>Unidad</Radio.Button>
+                    <Radio.Button value={"KG" as Unit}>
                       Kilogramos
                     </Radio.Button>
-                    <Radio.Button value={"L" as Units}>Litros</Radio.Button>
-                    <Radio.Button value={"OTHER" as Units}>Otros</Radio.Button>
+                    <Radio.Button value={"L" as Unit}>Litros</Radio.Button>
+                    <Radio.Button value={"OTHER" as Unit}>Otros</Radio.Button>
                   </Radio.Group>
                 )}
               />

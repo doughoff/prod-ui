@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckOutlined } from "@ant-design/icons";
-import { Product, Units, checkBarcode, editProduct } from "../../../api";
+import { Product, Unit, checkBarcode, editProduct } from "../../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormItemGroup } from "../../../components";
 import { productSchema } from "../productSchema";
@@ -167,12 +167,12 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
                 defaultValue={productData?.unit}
                 render={({ field }) => (
                   <Radio.Group {...field}>
-                    <Radio.Button value={"UNIT" as Units}>Unidad</Radio.Button>
-                    <Radio.Button value={"KG" as Units}>
+                    <Radio.Button value={"UNIT" as Unit}>Unidad</Radio.Button>
+                    <Radio.Button value={"KG" as Unit}>
                       Kilogramos
                     </Radio.Button>
-                    <Radio.Button value={"L" as Units}>Litros</Radio.Button>
-                    <Radio.Button value={"OTHER" as Units}>Otros</Radio.Button>
+                    <Radio.Button value={"L" as Unit}>Litros</Radio.Button>
+                    <Radio.Button value={"OTHER" as Unit}>Otros</Radio.Button>
                   </Radio.Group>
                 )}
               />
