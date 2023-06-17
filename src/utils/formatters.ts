@@ -28,7 +28,7 @@ export function unitFormatter(
       case 'UNITS':
         return `${value?.toFixed(3)} Un`;
       default:
-        return ``;
+        return `${value?.toFixed(3)}   `;
     }
   }
   if (position == 'left') {
@@ -40,7 +40,7 @@ export function unitFormatter(
       case 'UNITS':
         return `Un ${value?.toFixed(3)}`;
       default:
-        return ``;
+        return `${value?.toFixed(3)}`;
     }
   }
   return '';

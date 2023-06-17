@@ -5,5 +5,5 @@ type Props = {
 };
 
 export const PageDetails: React.FC<Props> = (props) => {
-  return <div className="bg-white mx-6 rounded-lg">{props.children}</div>;
+  return <div className="bg-white mx-6 mb-6 rounded-lg ">{props.children}</div>;
 };
