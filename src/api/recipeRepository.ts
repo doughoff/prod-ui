@@ -10,12 +10,12 @@ interface CreateAndEditRecipes {
   name: string;
   producedQuantity: number;
   productId: string;
-  ingredients: Ingredient[];
+  ingredients: Array<{
+    quantity: number;
+    productId: string;
+  }>;
 }
-interface Ingredient {
-  quantity: number;
-  productId: string;
-}
+
 interface DeleteRecipeGroup {
   status: Status;
 }

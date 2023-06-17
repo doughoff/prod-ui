@@ -32,7 +32,7 @@ const AppTemplate: React.FC = () => {
   }, []);
 
   return (
-    <Layout style={{ height: "100vh" }} className="overflow-hidden">
+    <Layout style={{ height: "100vh" }} className="overflow-hidden ">
       <Header
         style={{
           padding: "0 24px 24px",
@@ -164,8 +164,8 @@ const AppTemplate: React.FC = () => {
             },
           ]}
         />
-        <Layout>
-          <Content className="bg-gray-100 overflow-auto flex flex-col ">
+        <Layout className="bg-gray-100 overflow-auto ">
+          <Content className=" flex flex-col w-full max-w-screen-2xl m-auto">
             <Outlet />
           </Content>
         </Layout>
