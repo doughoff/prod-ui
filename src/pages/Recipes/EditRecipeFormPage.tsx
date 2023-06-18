@@ -27,6 +27,7 @@ import { RecipeIngredient, recipeSchema } from "./recipeSchema";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { RecipeIngredientForm } from "./components";
+import { useDebouncedEffect } from '../../hooks';
 
 type CreateRecipePayloadType = z.infer<typeof recipeSchema>;
 
@@ -41,10 +42,18 @@ const EditRecipeFormPage: React.FC = () => {
     control,
     handleSubmit,
     setValue,
+    setFocus,
     formState: { errors },
   } = useForm<CreateRecipePayloadType>({
     resolver: zodResolver(recipeSchema),
   });
+
+  useDebouncedEffect(() => {
+    if (isEditingProduct) {
+      setFocus("productId");
+    }
+  }, 300, [isEditingProduct])
+
 
   const { recipeId } = useParams();
 
