@@ -39,9 +39,9 @@ const StockEntryListingPage: React.FC = () => {
       return getStockMovements({
         search: filters.search,
         status: statusToStatusList(filters.status),
-        type: ['SALE'],
         offset: (filters.page - 1) * filters.pageSize,
         limit: filters.pageSize,
+        type: ['PURCHASE'],
       })
     },
   });
@@ -176,11 +176,6 @@ const StockEntryListingPage: React.FC = () => {
               pageSize: size,
             }))
           }}
-          pageSizeOptions={[
-            10,
-            20,
-            50,
-          ]}
         />
       </PageContent>
     </>
