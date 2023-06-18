@@ -32,7 +32,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = React.forwardRef(
     const [options, setOptions] = React.useState<SelectProps["options"]>([]);
     const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
 
-    const debounceTimer = React.useRef<unknown>(null);
+    const debounceTimer = React.useRef<number | null>(null);
 
     const fetchOptions = React.useCallback(
       (search: string) => {
@@ -67,6 +67,8 @@ const DebounceSelect: React.FC<DebounceSelectProps> = React.forwardRef(
     return (
       <Select
         className={className}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ref={inputRef}
         showSearch
         allowClear

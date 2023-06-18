@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { Units } from "../../api";
+import { Unit } from "../../api";
 
 const recipeSchema = z.object({
   name: z
@@ -41,8 +41,9 @@ export interface RecipeIngredient {
   productId: string;
   productName: string;
   quantity: number;
-  unit: Units;
+  unit: Unit;
   averageCost: number;
+  total: number;
 }
 
 export { recipeSchema, ingredientsSchema };
