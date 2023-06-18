@@ -23,7 +23,9 @@ const ProductListingPage: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
-  const [selectedStatus, setSelectedStatus] = React.useState<Status | "ALL">("ACTIVE");
+  const [selectedStatus, setSelectedStatus] = React.useState<Status | "ALL">(
+    "ACTIVE"
+  );
   const [search, setSearch] = React.useState<string | undefined>(undefined);
 
   const { data, isLoading, refetch } = useQuery({
@@ -32,14 +34,17 @@ const ProductListingPage: React.FC = () => {
       let statusOptions: Status[] = [];
       if (selectedStatus === "ALL") {
         statusOptions = ["ACTIVE", "INACTIVE"];
-      }
-      else {
+      } else {
         statusOptions = [selectedStatus];
       }
 
-      return getProducts({ status: statusOptions, limit: 10, offset: 0, search: search })
+      return getProducts({
+        status: statusOptions,
+        limit: 10,
+        offset: 0,
+        search: search,
+      });
     },
-    enabled: false,
   });
 
   const handleChange = (value: string | Status) => {
@@ -94,6 +99,7 @@ const ProductListingPage: React.FC = () => {
         />
       ),
     },
+
     {
       title: "Precio Promedio",
       dataIndex: "averageCost",

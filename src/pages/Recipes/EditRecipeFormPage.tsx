@@ -1,6 +1,6 @@
 import React from "react";
 import * as z from "zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Card,
@@ -21,27 +21,57 @@ import {
   message,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { createRecipes } from "../../api";
+import { editRecipes, getRecipeById } from "../../api";
 import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { RecipeIngredient, recipeSchema } from "./recipeSchema";
 import { Controller, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { RecipeIngredientForm } from "./components";
 
 type CreateRecipePayloadType = z.infer<typeof recipeSchema>;
 
-const CreateRecipeFormPage: React.FC = () => {
+const EditRecipeFormPage: React.FC = () => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formRef = React.useRef<any>();
+
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CreateRecipePayloadType>({
     resolver: zodResolver(recipeSchema),
   });
 
+  const { recipeId } = useParams();
+
+  const { data } = useQuery({
+    queryKey: ["recipe", recipeId],
+    queryFn: () =>
+      getRecipeById(recipeId)
+        .then((data) => {
+          const ingridientData = data?.ingredients.map((item) => {
+            return {
+              quantity: item.quantity,
+              productId: item.productId,
+              averageCost: item.averageCost ?? 1500,
+              productName: item.productName,
+              unit: item.productUnit,
+              total: Math.round((item.averageCost ?? 1500) * item.quantity),
+            };
+          });
+          setIngredients(ingridientData);
+          setValue("producedQuantity", data.producedQuantity);
+          setValue("productId", data.productId);
+          setValue("name", data.name);
+          return data;
+        })
+        .catch(() => {
+          message.error("Error al editar producto");
+          navigate(`/app/recipe/info/${recipeId}`);
+        }),
+  });
   const [ingredients, setIngredients] = React.useState<RecipeIngredient[]>([]);
 
   const removeItem = (data: RecipeIngredient[], productId: string) => {
@@ -49,28 +79,31 @@ const CreateRecipeFormPage: React.FC = () => {
     setIngredients(filtered);
   };
 
-  const createNewRecipe = React.useCallback(
+  const editNewRecipe = React.useCallback(
     (data: CreateRecipePayloadType) => {
-      return createRecipes({
-        name: data.name,
-        ingredients: ingredients.map((ingredient) => {
-          return {
-            productId: ingredient.productId,
-            quantity: ingredient.quantity,
-          };
-        }),
-        productId: data.productId,
-        producedQuantity: data.producedQuantity,
-      });
+      return editRecipes(
+        {
+          name: data.name,
+          ingredients: ingredients.map((ingredient) => {
+            return {
+              productId: ingredient.productId,
+              quantity: ingredient.quantity,
+            };
+          }),
+          productId: data.productId,
+          producedQuantity: data.producedQuantity,
+        },
+        recipeId
+      );
     },
     [ingredients]
   );
 
   const { isPending, mutate } = useMutation({
-    mutationFn: createNewRecipe,
-    onSuccess: () => {
-      message.success("Formula Registrada");
-      navigate("/app/recipes");
+    mutationFn: editNewRecipe,
+    onSuccess: (res) => {
+      message.success("Formula Editada");
+      navigate(`/app/recipes/info/${res.recipeId}`);
     },
     onError: () => {
       message.error("Error al registrar la formula");
@@ -138,7 +171,7 @@ const CreateRecipeFormPage: React.FC = () => {
   ];
 
   const totalSum = React.useMemo(() => {
-    const totalSum = ingredients.reduce(
+    const totalSum = ingredients?.reduce(
       (sum: number, ingredient: RecipeIngredient) => sum + ingredient.total,
       0
     );
@@ -156,12 +189,17 @@ const CreateRecipeFormPage: React.FC = () => {
             title: <Link to="/app/recipes">Formulas</Link>,
           },
           {
-            title: "Nueva Formula",
+            title: (
+              <Link to={`/app/recipes/info/${recipeId}`}>{data?.name}</Link>
+            ),
+          },
+          {
+            title: "Editar Formula",
           },
         ]}
         content={
           <div className="flex justify-between">
-            <Typography.Title level={3}>Crear Nueva Formula</Typography.Title>
+            <Typography.Title level={3}>Editar Formula</Typography.Title>
             <Button
               icon={<SaveOutlined />}
               type="primary"
@@ -198,7 +236,6 @@ const CreateRecipeFormPage: React.FC = () => {
                 <Controller
                   name="name"
                   control={control}
-                  defaultValue=""
                   render={({ field }) => (
                     <Input placeholder="Nombre de la Formula" {...field} />
                   )}
@@ -238,7 +275,6 @@ const CreateRecipeFormPage: React.FC = () => {
                 <Controller
                   name="producedQuantity"
                   control={control}
-                  defaultValue={1}
                   render={({ field }) => (
                     <InputNumber
                       {...field}
@@ -261,10 +297,12 @@ const CreateRecipeFormPage: React.FC = () => {
             <NumberText value={totalSum} format="currency" position="right" />
           </span>
         </div>
+
         <RecipeIngredientForm
           ingredients={ingredients}
           setIngredients={setIngredients}
         />
+
         <Table
           columns={columns}
           dataSource={ingredients}
@@ -276,4 +314,4 @@ const CreateRecipeFormPage: React.FC = () => {
   );
 };
 
-export default CreateRecipeFormPage;
+export default EditRecipeFormPage;

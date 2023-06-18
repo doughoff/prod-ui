@@ -67,7 +67,7 @@ const UserDetailPage: React.FC = () => {
         content={
           <div className="flex justify-between">
             <Typography.Title level={3}>
-              {"Infromación de " + data?.name}
+              {"Información de " + data?.name}
             </Typography.Title>
             <div className="flex gap-2">
               <Button icon={<EditOutlined />} onClick={showEditModal}>

@@ -83,6 +83,7 @@ const UserListingPage: React.FC = () => {
       dataIndex: "actions",
       key: "actions",
       width: 100,
+      align: "center",
       render: (_, row) => (
         <Button
           type="link"

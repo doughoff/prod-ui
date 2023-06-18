@@ -79,6 +79,7 @@ const RecipesListingPage: React.FC = () => {
     {
       title: "Acciones",
       dataIndex: "actions",
+      align: "center",
       key: "actions",
       width: 100,
       render: (_, row) => (

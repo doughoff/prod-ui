@@ -49,17 +49,17 @@ const createRecipes = (params: CreateAndEditRecipes): Promise<boolean> => {
 const editRecipes = (
   params: CreateAndEditRecipes,
   recipeID: string | undefined
-): Promise<boolean> => {
+): Promise<Recipe> => {
   return new Promise((resolve, reject) => {
     api
       .put(`/recipes/${recipeID}`, params)
       .then((res) => {
         console.log(res);
-        resolve(true);
+        resolve(res.data);
       })
       .catch((err) => {
         console.log(err);
-        reject(false);
+        reject(err);
       });
   });
 };

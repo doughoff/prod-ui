@@ -19,7 +19,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = React.forwardRef(
         search: search,
         limit: 10,
         offset: 0,
-        status: "ACTIVE",
+        status: ["ACTIVE"],
       });
 
       return products.map((product) => ({

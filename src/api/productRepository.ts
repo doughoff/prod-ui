@@ -1,4 +1,4 @@
-import { Product, Status, Unit, api } from '.';
+import { Product, Status, Unit, api } from ".";
 
 interface GetProducts {
   status?: Status[];
@@ -25,11 +25,12 @@ interface EditProduct {
 
 const getProducts = (params: GetProducts): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
+    console.log(params.status);
     api
-      .get('/products', {
+      .get("/products", {
         params: {
           ...params,
-          status: params.status?.join(','),
+          status: params.status?.join(","),
         },
       })
       .then((res) => {
@@ -44,7 +45,7 @@ const getProducts = (params: GetProducts): Promise<Product[]> => {
 const createProduct = (params: CreateProduct): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post('/products', params)
+      .post("/products", params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -64,7 +65,7 @@ const checkBarcode = (barcode: string): Promise<boolean> => {
         resolve(true);
       })
       .catch((err) => {
-        if (err.code == 'ERR_BAD_REQUEST') {
+        if (err.code == "ERR_BAD_REQUEST") {
           resolve(false);
         } else {
           reject(err);
