@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProductDetailPage, ProductListingPage } from "./pages/Product";
 import { SupplierDetailPage, SupplierListingPage } from "./pages/Supplier";
 import { CreateRecipeFormPage, RecipesListingPage } from "./pages/Recipes";
+import StockEntryListingPage from './pages/stockEntry/StockEntryListingPage';
 
 const App: React.FunctionComponent = () => {
   const queryClient = new QueryClient({
@@ -95,6 +96,19 @@ const App: React.FunctionComponent = () => {
             },
             {
               path: "/app/recipes/create",
+              element: <CreateRecipeFormPage />,
+            },
+          ],
+        },
+        {
+          path: "/app/stock_entry",
+          children: [
+            {
+              path: "/app/stock_entry",
+              element: <StockEntryListingPage />,
+            },
+            {
+              path: "/app/stock_entry/create",
               element: <CreateRecipeFormPage />,
             },
           ],
