@@ -22,7 +22,7 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { editRecipes, getRecipeById } from "../../api";
-import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { RecipeIngredient, recipeSchema } from "./recipeSchema";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -32,8 +32,10 @@ type CreateRecipePayloadType = z.infer<typeof recipeSchema>;
 
 const EditRecipeFormPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isEditingProduct, setIsEditingProduct] = React.useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formRef = React.useRef<any>();
+
 
   const {
     control,
@@ -46,12 +48,12 @@ const EditRecipeFormPage: React.FC = () => {
 
   const { recipeId } = useParams();
 
-  const { data } = useQuery({
+  const { data: recipe } = useQuery({
     queryKey: ["recipe", recipeId],
     queryFn: () =>
       getRecipeById(recipeId)
-        .then((data) => {
-          const ingridientData = data?.ingredients.map((item) => {
+        .then((recipe) => {
+          const ingridientData = recipe?.ingredients.map((item) => {
             return {
               quantity: item.quantity,
               productId: item.productId,
@@ -62,10 +64,10 @@ const EditRecipeFormPage: React.FC = () => {
             };
           });
           setIngredients(ingridientData);
-          setValue("producedQuantity", data.producedQuantity);
-          setValue("productId", data.productId);
-          setValue("name", data.name);
-          return data;
+          setValue("producedQuantity", recipe.producedQuantity);
+          setValue("productId", recipe.productId);
+          setValue("name", recipe.name);
+          return recipe;
         })
         .catch(() => {
           message.error("Error al editar producto");
@@ -190,7 +192,7 @@ const EditRecipeFormPage: React.FC = () => {
           },
           {
             title: (
-              <Link to={`/app/recipes/info/${recipeId}`}>{data?.name}</Link>
+              <Link to={`/app/recipes/info/${recipeId}`}>{recipe?.name}</Link>
             ),
           },
           {
@@ -251,16 +253,22 @@ const EditRecipeFormPage: React.FC = () => {
                 validateStatus={errors.productId ? "error" : ""}
                 help={errors.productId?.message}
               >
-                <Controller
-                  name="productId"
-                  control={control}
-                  render={({ field }) => (
-                    <ProductSelector
-                      placeholder="Selecciona un Producto"
-                      {...field}
-                    />
-                  )}
-                />
+                {isEditingProduct ? (
+                  <Controller
+                    name="productId"
+                    control={control}
+                    render={({ field }) => (
+                      <ProductSelector
+                        placeholder="Selecciona un Producto"
+                        {...field}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Button type='link' onClick={() => {
+                    setIsEditingProduct(true)
+                  }}>{recipe?.productName} &nbsp; &nbsp;  <EditOutlined /></Button>
+                )}
               </Form.Item>
             }
             title="Producto a Producir"
