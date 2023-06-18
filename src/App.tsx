@@ -124,7 +124,7 @@ const App: React.FunctionComponent = () => {
               path: "/app/stock_entry/create",
               element: <CreateRecipeFormPage />,
             },
-          ],
+          ]
         },
       ],
     },
