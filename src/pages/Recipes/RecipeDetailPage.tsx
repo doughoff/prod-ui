@@ -16,7 +16,6 @@ import dayjs from "dayjs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Ingredient,
-  Recipe,
   deleteRecipeGroup,
   getRecipeById,
   getRecipeGroup,
@@ -24,6 +23,7 @@ import {
 import {
   NumberText,
   PageContent,
+  PageDetails,
   PageHeader,
   StatusTag,
 } from "../../components";
@@ -35,28 +35,22 @@ const RecipeDetailPage: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = React.useState<
     string | undefined
   >(recipeId);
-  const [recipeGroup, setRecipeGroup] = React.useState<Recipe[]>([]);
 
-  const GetRecipeGroup = (recipeGroupId: string | undefined) => {
-    getRecipeGroup(recipeGroupId)
-      .then((res) => setRecipeGroup(res))
-      .catch(() =>
-        message.error("Error al buscar las versiones de la formula")
-      );
-  };
   const { data: recipe } = useQuery({
     queryKey: ["recipe", selectedRecipe],
     queryFn: () => {
-      if (recipeGroup.length == 0) {
-        return getRecipeById(selectedRecipe).then((res) => {
-          GetRecipeGroup(res.recipeGroupId);
-          return res;
-        });
-      } else {
-        return getRecipeById(selectedRecipe);
-      }
+      return getRecipeById(selectedRecipe);
     },
   });
+
+  const { data: recipeGroup } = useQuery({
+    queryKey: ["recipeGroup", selectedRecipe],
+    queryFn: () => {
+      return getRecipeGroup(recipe?.recipeGroupId);
+    },
+    enabled: !!recipe,
+  })
+
 
   const isRecipeActive = recipe?.status === "ACTIVE" ?? false;
 
@@ -165,69 +159,67 @@ const RecipeDetailPage: React.FC = () => {
           </div>
         }
       />
-      <Tabs
-        type="card"
-        className="mx-6 bg-white rounded-t-lg h-full "
-        defaultActiveKey="1"
-        items={[
-          {
-            key: "Informacion",
-            label: "Informacion",
-            children: (
-              <PageContent
-                className="!mx-0 !rounded-none"
-                style={{
-                  margin: "-16px",
-                  borderLeft: "1px solid #f0f0f0",
-                  borderRight: "1px solid #f0f0f0",
-                }}
-              >
-                <div className="mb-6">
-                  <Descriptions
-                    bordered
-                    column={1}
-                    style={{ background: "white", borderRadius: "8px" }}
-                  >
-                    <Descriptions.Item label="Nombre">
-                      {recipe?.name}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Estado">
-                      {recipe ? <StatusTag status={recipe?.status} /> : <></>}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Creado Por">
-                      {recipe?.createdByUserName}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Fecha de Creación">
-                      <NumberText
-                        value={dayjs(recipe?.createdAt).format(
-                          "DD/MM/YYYY HH:mm A"
-                        )}
-                      />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Producto">
-                      {recipe?.productName}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Cantidad estimada de Producción">
-                      <NumberText value={recipe?.producedQuantity} />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Costo Unitario">
-                      <NumberText
-                        value={Math.round(
-                          (totalSum ?? 0) / (recipe?.producedQuantity ?? 0)
-                        )}
-                        format="currency"
-                        position="right"
-                      />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Costo Total">
-                      <NumberText
-                        value={Math.round(totalSum ?? 0)}
-                        format="currency"
-                        position="right"
-                      />
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
+      <PageDetails>
+        <Descriptions
+          size='small'
+          bordered
+          column={1}
+          style={{ background: "white", borderRadius: "8px" }}
+        >
+          <Descriptions.Item label="Nombre">
+            {recipe?.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="Estado">
+            {recipe ? <StatusTag status={recipe?.status} /> : <></>}
+          </Descriptions.Item>
+          <Descriptions.Item label="Creado Por">
+            {recipe?.createdByUserName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Fecha de Creación">
+            <NumberText
+              value={dayjs(recipe?.createdAt).format(
+                "DD/MM/YYYY HH:mm A"
+              )}
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Producto">
+            {recipe?.productName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Cantidad estimada de Producción">
+            <NumberText value={recipe?.producedQuantity} />
+          </Descriptions.Item>
+          <Descriptions.Item label="Costo Unitario">
+            <NumberText
+              value={Math.round(
+                (totalSum ?? 0) / (recipe?.producedQuantity ?? 0)
+              )}
+              format="currency"
+              position="right"
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Costo Total">
+            <NumberText
+              value={Math.round(totalSum ?? 0)}
+              format="currency"
+              position="right"
+            />
+          </Descriptions.Item>
+        </Descriptions>
+      </PageDetails>
+      <PageContent
+        style={{
+          padding: 0,
+        }}
+      >
+        <Tabs
+          className='mx-5'
+          defaultActiveKey="1"
+          items={[
+            {
+              key: "Informacion",
+              label: "Informacion",
+              children: (
+
                 <Table
                   columns={columns}
                   dataSource={recipe?.ingredients}
@@ -235,25 +227,15 @@ const RecipeDetailPage: React.FC = () => {
                   pagination={false}
                   className="mb-6"
                 />
-              </PageContent>
-            ),
-          },
-          {
-            disabled: recipeGroup.length <= 1,
-            key: "Versiones",
-            label: "Versiones Anteriores",
-            children: (
-              <PageContent
-                className="!mx-0 p-6 !rounded-none "
-                style={{
-                  marginTop: "-16px",
-                  borderLeft: "1px solid #f0f0f0",
-                  borderRight: "1px solid #f0f0f0",
-                }}
-              >
+              ),
+            },
+            {
+              key: "Versiones",
+              label: "Versiones Anteriores",
+              children: (
                 <div className="flex">
                   <Timeline
-                    items={recipeGroup.map((ingredients) => {
+                    items={(recipeGroup ?? []).map((ingredients) => {
                       if (ingredients.recipeId == selectedRecipe) {
                         return {
                           color: "green",
@@ -277,11 +259,11 @@ const RecipeDetailPage: React.FC = () => {
                     })}
                   />
                 </div>
-              </PageContent>
-            ),
-          },
-        ]}
-      />
+              ),
+            },
+          ]}
+        />
+      </PageContent>
     </>
   );
 };
