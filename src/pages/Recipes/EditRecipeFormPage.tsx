@@ -27,7 +27,7 @@ import { RecipeIngredient, recipeSchema } from "./recipeSchema";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { RecipeIngredientForm } from "./components";
-import { useDebouncedEffect } from '../../hooks';
+import { useDebouncedEffect } from "../../hooks";
 
 type CreateRecipePayloadType = z.infer<typeof recipeSchema>;
 
@@ -37,23 +37,27 @@ const EditRecipeFormPage: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formRef = React.useRef<any>();
 
-
   const {
     control,
     handleSubmit,
     setValue,
     setFocus,
+    watch,
+
     formState: { errors },
   } = useForm<CreateRecipePayloadType>({
     resolver: zodResolver(recipeSchema),
   });
 
-  useDebouncedEffect(() => {
-    if (isEditingProduct) {
-      setFocus("productId");
-    }
-  }, 300, [isEditingProduct])
-
+  useDebouncedEffect(
+    () => {
+      if (isEditingProduct) {
+        setFocus("productId");
+      }
+    },
+    300,
+    [isEditingProduct]
+  );
 
   const { recipeId } = useParams();
 
@@ -274,9 +278,15 @@ const EditRecipeFormPage: React.FC = () => {
                     )}
                   />
                 ) : (
-                  <Button type='link' onClick={() => {
-                    setIsEditingProduct(true)
-                  }}>{recipe?.productName} &nbsp; &nbsp;  <EditOutlined /></Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      setValue("productId", "");
+                      setIsEditingProduct(true);
+                    }}
+                  >
+                    {recipe?.productName} &nbsp; &nbsp; <EditOutlined />
+                  </Button>
                 )}
               </Form.Item>
             }
@@ -309,10 +319,20 @@ const EditRecipeFormPage: React.FC = () => {
       <PageContent>
         <div className="flex justify-between align-baseline">
           <Typography.Title level={4}>Ingredientes</Typography.Title>
-          <span>
-            <strong>Total: </strong>
-            <NumberText value={totalSum} format="currency" position="right" />
-          </span>
+          <div className="flex gap-2 align-baseline">
+            <span>
+              <strong>Costo por Unidad: </strong>
+              <NumberText
+                value={Math.round(totalSum / watch("producedQuantity"))}
+                format="currency"
+                position="right"
+              />
+            </span>
+            <span>
+              <strong>Costo Total: </strong>
+              <NumberText value={totalSum} format="currency" position="right" />
+            </span>
+          </div>
         </div>
 
         <RecipeIngredientForm

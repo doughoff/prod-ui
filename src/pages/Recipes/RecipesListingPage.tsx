@@ -6,26 +6,36 @@ import {
   PageHeader,
   StatusTag,
 } from "../../components";
-import { Button, Select, Table } from "antd";
+import { Button, Input, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
-import { Recipe, Status, getRecipes } from "../../api";
+import { PageFilters, Recipe, Status, getRecipes } from "../../api";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { statusToStatusList } from "../../utils/enumListParsers";
 
 const RecipesListingPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["recipes", filter],
-    queryFn: () => getRecipes({ status: filter, limit: 200, offset: 0 }),
+  const [search, setSearch] = React.useState<string | undefined>(undefined);
+  const [filters, setFilters] = React.useState<PageFilters>({
+    status: "ACTIVE",
+    search: undefined,
+    pageSize: 10,
+    page: 1,
   });
 
-  const handleChange = (value: string | Status) => {
-    return setFilter(value as Status);
-  };
+  const { data: result, isLoading } = useQuery({
+    queryKey: ["recipes", filters],
+    queryFn: () => {
+      return getRecipes({
+        search: filters.search,
+        status: statusToStatusList(filters.status),
+        offset: (filters.page - 1) * filters.pageSize,
+        limit: filters.pageSize,
+      });
+    },
+  });
 
   const columns: ColumnsType<Recipe> = [
     {
@@ -113,30 +123,41 @@ const RecipesListingPage: React.FC = () => {
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
-            style={{ width: 120 }}
-            onChange={handleChange}
+            style={{ width: 150 }}
+            onChange={(value) => {
+              setFilters((prev) => ({
+                ...prev,
+                status: value as PageFilters["status"],
+              }));
+            }}
             options={[
               { value: "ACTIVE", label: "Activos" },
               { value: "INACTIVE", label: "Inactivos" },
-              { value: "ACTIVE,INACTIVE", label: "Todos" },
+              { value: "ALL", label: "Todos" },
             ]}
+          />
+          <Input.Search
+            placeholder="Buscar por nombre del proveedor"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onSearch={() => setFilters((prev) => ({ ...prev, search }))}
           />
           <Button
             icon={<PlusOutlined />}
-            onClick={() => {
-              navigate("/app/recipes/create");
-            }}
+            onClick={() => navigate("/app/recipes/create")}
           >
             Nuevo Formula
           </Button>
         </div>
         <Table
-          rowKey="id"
+          rowKey="recipeId"
           loading={isLoading}
           className="mt-3"
           size="small"
           columns={columns}
-          dataSource={data}
+          dataSource={result}
         />
       </PageContent>
     </>

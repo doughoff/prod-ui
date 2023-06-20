@@ -1,10 +1,10 @@
 import { Entities, Status, api } from ".";
 
 interface GetEntitites {
-  status?: Status | string;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateEntities {
   name: string;

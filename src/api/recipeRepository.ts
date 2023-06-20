@@ -1,10 +1,10 @@
 import { Recipe, Status, api } from ".";
 
 interface GetRecipes {
-  status?: Status | string;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateAndEditRecipes {
   name: string;
@@ -77,7 +77,7 @@ const getRecipeById = (recipesId: string | undefined): Promise<Recipe> => {
 };
 const getRecipeGroup = (
   recipesGroupId: string | undefined
-): Promise<Recipe> => {
+): Promise<Recipe[]> => {
   return new Promise((resolve, reject) => {
     api
       .get(`/recipes_group/${recipesGroupId}`)

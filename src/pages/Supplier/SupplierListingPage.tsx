@@ -7,13 +7,14 @@ import {
   StatusTag,
 } from "../../components";
 import dayjs from "dayjs";
-import { Entities, Status, getEntitites } from "../../api";
+import { Entities, PageFilters, Status, getEntitites } from "../../api";
 import { ColumnsType } from "antd/es/table";
 import { Button, Input, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useQuery } from "@tanstack/react-query";
 import { CreateSupplierFormModal } from "./CreateSupplierForm";
+import { statusToStatusList } from "../../utils/enumListParsers";
 
 const SupplierListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,19 +25,25 @@ const SupplierListingPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
   const [search, setSearch] = React.useState<string | undefined>(undefined);
-  const [searching, setSearching] = React.useState<boolean>(true);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["suppliers", filter, searching],
-    queryFn: () =>
-      getEntitites({ status: filter, limit: 200, offset: 0, search: search }),
+  const [filters, setFilters] = React.useState<PageFilters>({
+    status: "ACTIVE",
+    search: undefined,
+    pageSize: 10,
+    page: 1,
   });
 
-  const handleChange = (value: string | Status) => {
-    return setFilter(value as Status);
-  };
+  const { data: result, isLoading } = useQuery({
+    queryKey: ["suppliers", filters],
+    queryFn: () => {
+      return getEntitites({
+        search: filters.search,
+        status: statusToStatusList(filters.status),
+        offset: (filters.page - 1) * filters.pageSize,
+        limit: filters.pageSize,
+      });
+    },
+  });
 
   const columns: ColumnsType<Entities> = [
     {
@@ -115,21 +122,28 @@ const SupplierListingPage: React.FC = () => {
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
-            style={{ width: 120 }}
-            onChange={handleChange}
+            style={{ width: 150 }}
+            onChange={(value) => {
+              setFilters((prev) => ({
+                ...prev,
+                status: value as PageFilters["status"],
+              }));
+            }}
             options={[
               { value: "ACTIVE", label: "Activos" },
               { value: "INACTIVE", label: "Inactivos" },
-              { value: "ACTIVE,INACTIVE", label: "Todos" },
+              { value: "ALL", label: "Todos" },
             ]}
           />
           <Input.Search
-            placeholder="Buscar Proveedor"
+            placeholder="Buscar por nombre del proveedor"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onSearch={() => setSearching(!searching)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onSearch={() => setFilters((prev) => ({ ...prev, search }))}
           />
-          <Button icon={<PlusOutlined />} onClick={showModal}>
+          <Button icon={<PlusOutlined />} onClick={() => showModal()}>
             Nuevo Proveedor
           </Button>
         </div>
@@ -139,7 +153,7 @@ const SupplierListingPage: React.FC = () => {
           className="mt-3"
           size="small"
           columns={columns}
-          dataSource={data}
+          dataSource={result}
         />
         <CreateSupplierFormModal
           isModalOpen={isModalOpen}

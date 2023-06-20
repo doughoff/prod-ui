@@ -105,3 +105,10 @@ export interface StockMovement {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface PageFilters {
+  status: Status | "ALL";
+  search: string | undefined;
+  pageSize: number;
+  page: number;
+}

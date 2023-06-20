@@ -7,21 +7,14 @@ import {
   StatusTag,
 } from "../../components";
 import dayjs from "dayjs";
-import { Status } from "../../api";
+import { PageFilters, Status } from "../../api";
 import { Button, Input, Pagination, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useQuery } from "@tanstack/react-query";
-import { getStockMovements } from '../../api/stockMovementRepository';
-import { statusToStatusList } from '../../utils/enumListParsers';
-import { useDebouncedEffect } from '../../hooks';
-
-interface PageFilters {
-  status: Status | "ALL";
-  search: string | undefined;
-  pageSize: number;
-  page: number;
-}
+import { getStockMovements } from "../../api/stockMovementRepository";
+import { statusToStatusList } from "../../utils/enumListParsers";
+import { useDebouncedEffect } from "../../hooks";
 
 const StockEntryListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -41,15 +34,18 @@ const StockEntryListingPage: React.FC = () => {
         status: statusToStatusList(filters.status),
         offset: (filters.page - 1) * filters.pageSize,
         limit: filters.pageSize,
-        type: ['PURCHASE'],
-      })
+        type: ["PURCHASE"],
+      });
     },
   });
 
-  useDebouncedEffect(() => {
-    setFilters((prev) => ({ ...prev, search: search }))
-  }, 500, [search])
-
+  useDebouncedEffect(
+    () => {
+      setFilters((prev) => ({ ...prev, search: search }));
+    },
+    500,
+    [search]
+  );
 
   return (
     <>
@@ -73,7 +69,7 @@ const StockEntryListingPage: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 status: value as PageFilters["status"],
-              }))
+              }));
             }}
             options={[
               { value: "ACTIVE", label: "Activos" },
@@ -89,9 +85,7 @@ const StockEntryListingPage: React.FC = () => {
             }}
             onSearch={() => setFilters((prev) => ({ ...prev, search }))}
           />
-          <Button icon={<PlusOutlined />} >
-            Nueva Entrada
-          </Button>
+          <Button icon={<PlusOutlined />}>Nueva Entrada</Button>
         </div>
         <Table
           rowKey="id"
@@ -158,7 +152,7 @@ const StockEntryListingPage: React.FC = () => {
           pagination={false}
         />
         <Pagination
-          className='mt-3 float-right'
+          className="mt-3 float-right"
           showSizeChanger
           total={result?.totalCount || 0}
           current={filters.page}
@@ -174,7 +168,7 @@ const StockEntryListingPage: React.FC = () => {
               ...prev,
               page: current,
               pageSize: size,
-            }))
+            }));
           }}
         />
       </PageContent>
