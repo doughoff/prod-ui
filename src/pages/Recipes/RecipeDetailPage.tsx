@@ -201,10 +201,10 @@ const RecipeDetailPage: React.FC = () => {
           padding: 0,
         }}
       >
-        {recipe?.isCurrent ? (
-          <Badge.Ribbon color="blue" text="Ultima Revisión" />
+        {recipe?.isCurrent != undefined ? (
+          <Badge.Ribbon color={recipe.isCurrent ? "blue" : "orange"} text={recipe.isCurrent ? "Ultima Revisión" : `Revision ${recipe?.revision}`} />
         ) : (
-          <Badge.Ribbon color="orange" text={`Revision ${recipe?.revision}`} />
+          <></>
         )}
         <Tabs
           className="mx-5"
