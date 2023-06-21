@@ -6,6 +6,7 @@ import {
   Button,
   Descriptions,
   Popconfirm,
+  Spin,
   Table,
   Tabs,
   Timeline,
@@ -37,7 +38,7 @@ const RecipeDetailPage: React.FC = () => {
     string | undefined
   >(recipeId);
 
-  const { data: recipe } = useQuery({
+  const { data: recipe, isLoading: isRecipeLoading } = useQuery({
     queryKey: ["recipe", selectedRecipe],
     queryFn: () => {
       return getRecipeById(selectedRecipe);
@@ -86,6 +87,22 @@ const RecipeDetailPage: React.FC = () => {
       key: "productName",
     },
   ];
+
+  if (isRecipeLoading) {
+    return <div
+      style={{
+        height: "300px",
+        margin: "20px 0",
+        marginBottom: "20px",
+        padding: "30px 50px",
+        textAlign: "center",
+      }}
+    >
+      <Spin tip="Cargando..." ></Spin>
+    </div>;
+  }
+
+
 
   return (
     <>
