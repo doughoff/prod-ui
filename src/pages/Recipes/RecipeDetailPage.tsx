@@ -12,7 +12,6 @@ import {
   message,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import dayjs from "dayjs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Ingredient,
@@ -166,13 +165,10 @@ const RecipeDetailPage: React.FC = () => {
           column={1}
           style={{ background: "white", borderRadius: "8px" }}
         >
-          <Descriptions.Item label="Nombre">
-            {recipe?.name}
-          </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {recipe ? <StatusTag status={recipe?.status} /> : <></>}
           </Descriptions.Item>
-          <Descriptions.Item label="Creado Por">
+          {/* <Descriptions.Item label="Creado Por">
             {recipe?.createdByUserName}
           </Descriptions.Item>
           <Descriptions.Item label="Fecha de Creación">
@@ -181,7 +177,7 @@ const RecipeDetailPage: React.FC = () => {
                 "DD/MM/YYYY HH:mm A"
               )}
             />
-          </Descriptions.Item>
+          </Descriptions.Item> */}
           <Descriptions.Item label="Producto">
             {recipe?.productName}
           </Descriptions.Item>
