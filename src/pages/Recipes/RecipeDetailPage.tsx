@@ -2,6 +2,7 @@ import React from "react";
 import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  Badge,
   Button,
   Descriptions,
   Popconfirm,
@@ -26,6 +27,7 @@ import {
   PageHeader,
   StatusTag,
 } from "../../components";
+import dayjs from "dayjs";
 
 const RecipeDetailPage: React.FC = () => {
   const { recipeId } = useParams();
@@ -48,8 +50,7 @@ const RecipeDetailPage: React.FC = () => {
       return getRecipeGroup(recipe?.recipeGroupId);
     },
     enabled: !!recipe,
-  })
-
+  });
 
   const isRecipeActive = recipe?.status === "ACTIVE" ?? false;
 
@@ -105,15 +106,18 @@ const RecipeDetailPage: React.FC = () => {
             <Typography.Title level={3}>
               {"Información de " + recipe?.name}
             </Typography.Title>
+
             <div className="flex gap-2">
               <Button
                 icon={<EditOutlined />}
                 onClick={() =>
                   navigate(`/app/recipes/edit/${recipe?.recipeId}`)
                 }
+                hidden={!recipe?.isCurrent}
               >
                 Editar
               </Button>
+
               {recipe && (
                 <Popconfirm
                   placement="bottom"
@@ -160,7 +164,7 @@ const RecipeDetailPage: React.FC = () => {
       />
       <PageDetails>
         <Descriptions
-          size='small'
+          size="small"
           bordered
           column={1}
           style={{ background: "white", borderRadius: "8px" }}
@@ -168,16 +172,6 @@ const RecipeDetailPage: React.FC = () => {
           <Descriptions.Item label="Estado">
             {recipe ? <StatusTag status={recipe?.status} /> : <></>}
           </Descriptions.Item>
-          {/* <Descriptions.Item label="Creado Por">
-            {recipe?.createdByUserName}
-          </Descriptions.Item>
-          <Descriptions.Item label="Fecha de Creación">
-            <NumberText
-              value={dayjs(recipe?.createdAt).format(
-                "DD/MM/YYYY HH:mm A"
-              )}
-            />
-          </Descriptions.Item> */}
           <Descriptions.Item label="Producto">
             {recipe?.productName}
           </Descriptions.Item>
@@ -207,15 +201,19 @@ const RecipeDetailPage: React.FC = () => {
           padding: 0,
         }}
       >
+        {recipe?.isCurrent ? (
+          <Badge.Ribbon color="blue" text="Ultima Revisión" />
+        ) : (
+          <Badge.Ribbon color="orange" text={`Revision ${recipe?.revision}`} />
+        )}
         <Tabs
-          className='mx-5'
+          className="mx-5"
           defaultActiveKey="1"
           items={[
             {
               key: "Informacion",
               label: "Informacion",
               children: (
-
                 <Table
                   columns={columns}
                   dataSource={recipe?.ingredients}
@@ -231,24 +229,88 @@ const RecipeDetailPage: React.FC = () => {
               children: (
                 <div className="flex">
                   <Timeline
-                    items={(recipeGroup ?? []).map((ingredients) => {
-                      if (ingredients.recipeId == selectedRecipe) {
+                    items={(recipeGroup ?? []).map((recipeVersion) => {
+                      if (recipeVersion.recipeId == selectedRecipe) {
                         return {
-                          color: "green",
+                          color: "black",
                           children: (
-                            <span>{`Version ${ingredients.revision}`}</span>
+                            <>
+                              <p>
+                                <span>Revision: </span>
+                                <NumberText value={recipeVersion.revision} />
+                              </p>
+                              <p>
+                                <span>Creado: </span>
+                                <NumberText
+                                  value={dayjs(recipeVersion.createdAt).format(
+                                    "DD/MM/YYYY"
+                                  )}
+                                />
+                              </p>
+                              <p>
+                                <span>
+                                  Creado por: {recipeVersion.createdByUserName}
+                                </span>
+                              </p>
+                              <p>
+                                <span>
+                                  Producto: {recipeVersion.productName}
+                                </span>
+                              </p>
+                              <p>
+                                <span>Cantidad: </span>
+                                <NumberText
+                                  value={recipeVersion.producedQuantity}
+                                  unit={recipeVersion.productUnit}
+                                  format="unit"
+                                  position="right"
+                                />
+                              </p>
+                            </>
                           ),
                         };
                       } else {
                         return {
                           color: "blue",
                           children: (
-                            <span
-                              className="text-blue-500 cursor-pointer"
-                              onClick={() => {
-                                setSelectedRecipe(ingredients.recipeId);
-                              }}
-                            >{`Version ${ingredients.revision}`}</span>
+                            <>
+                              <p>
+                                <Button
+                                  onClick={() =>
+                                    setSelectedRecipe(recipeVersion.recipeId)
+                                  }
+                                >
+                                  Ver Revisión {recipeVersion.revision}
+                                </Button>
+                              </p>
+                              <p>
+                                <span>Creado: </span>
+                                <NumberText
+                                  value={dayjs(recipeVersion.createdAt).format(
+                                    "DD/MM/YYYY"
+                                  )}
+                                />
+                              </p>
+                              <p>
+                                <span>
+                                  Creado por: {recipeVersion.createdByUserName}
+                                </span>
+                              </p>
+                              <p>
+                                <span>
+                                  Producto: {recipeVersion.productName}
+                                </span>
+                              </p>
+                              <p>
+                                <span>Cantidad: </span>
+                                <NumberText
+                                  value={recipeVersion.producedQuantity}
+                                  unit={recipeVersion.productUnit}
+                                  format="unit"
+                                  position="right"
+                                />
+                              </p>
+                            </>
                           ),
                         };
                       }
