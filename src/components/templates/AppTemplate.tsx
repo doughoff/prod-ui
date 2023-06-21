@@ -25,8 +25,8 @@ const AppTemplate: React.FC = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const sessionID = localStorage.getItem("sessionID");
-    if (!sessionID) {
+    const loggedIn = localStorage.getItem("loggedIn");
+    if (!loggedIn) {
       navigate("/login");
     }
   }, []);

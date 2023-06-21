@@ -3,16 +3,7 @@ import axios, { AxiosError } from 'axios';
 
 export const api = axios.create({
   baseURL: 'http://127.0.0.1:3088',
-});
-
-api.interceptors.request.use((config) => {
-  const sessionID = localStorage.getItem('sessionID');
-
-  if (sessionID) {
-    config.headers['x-session'] = sessionID;
-  }
-
-  return config;
+  withCredentials: true,
 });
 
 api.interceptors.response.use(
@@ -25,6 +16,7 @@ api.interceptors.response.use(
         'Ocurrió un error en el cliente. Por favor, póngase en contacto con el administrador.'
       );
       window.history.pushState({}, '', '/login');
+      window.location.reload();
     }
 
     // Network Connection error
@@ -41,7 +33,8 @@ api.interceptors.response.use(
     }
 
     if (error?.response?.status && error.response?.status === 401) {
-      localStorage.removeItem('sessionID');
+      localStorage.removeItem('loggedIn');
+      window.history.pushState({}, '', '/login');
       window.location.reload();
     }
 
@@ -49,6 +42,7 @@ api.interceptors.response.use(
     else if (error.response?.status && error.response.status === 403) {
       message.error('Access to the screen blocked!');
       window.history.back();
+      window.location.reload();
     }
 
     return Promise.reject(error);
