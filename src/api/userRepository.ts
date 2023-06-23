@@ -1,10 +1,10 @@
-import { Role, Status, User, api } from '.';
+import { QueryResult, Role, Status, User, api } from ".";
 
 interface GetUsers {
-  status?: Status;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateUser {
   name: string;
@@ -19,12 +19,12 @@ interface EditUser {
   status: Status;
 }
 
-const getUsers = (params: GetUsers): Promise<User[]> => {
+const getUsers = (params: GetUsers): Promise<QueryResult<User>> => {
   return new Promise((resolve, reject) => {
     api
-      .get('/users', { params })
+      .get("/users", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);
@@ -34,7 +34,7 @@ const getUsers = (params: GetUsers): Promise<User[]> => {
 const createUser = (params: CreateUser): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post('/users', params)
+      .post("/users", params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -54,7 +54,7 @@ const checkEmail = (email: string): Promise<boolean> => {
         resolve(true);
       })
       .catch((err) => {
-        if (err.code == 'ERR_BAD_REQUEST') {
+        if (err.code == "ERR_BAD_REQUEST") {
           resolve(false);
         } else {
           reject(err);

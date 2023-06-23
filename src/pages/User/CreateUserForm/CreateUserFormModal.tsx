@@ -103,7 +103,6 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     >
       <Form onFinish={handleSubmit((data) => mutate(data))}>
         <Divider className="mt-0" />
-
         <FormItemGroup
           inputs={
             <Form.Item
@@ -227,7 +226,7 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
           }
           title="Roles"
         />
-        <Divider className="mt-0" />
+        <Divider className="my-0" />
 
         <Form.Item className="pt-3">
           <div className="flex justify-end">
