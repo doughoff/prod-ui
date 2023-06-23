@@ -194,13 +194,15 @@ const CreateRecipeFormPage: React.FC = () => {
         </Form>
       </Card>
       <PageContent>
-        <div className="flex justify-between align-baseline mb-6">
-          <Typography.Title level={4}>Ingredientes</Typography.Title>
+        <div className="flex justify-between align-baseline mb-3">
+          <Typography.Title level={4} className="">
+            Ingredientes
+          </Typography.Title>
           <div className="flex gap-2 align-baseline">
             <span>
               <strong>Costo por Unidad: </strong>
               <NumberText
-                value={Math.round(totalSum / watch("producedQuantity"))}
+                value={Math.round(totalSum / watch("producedQuantity") ?? 0)}
                 format="currency"
                 position="right"
               />

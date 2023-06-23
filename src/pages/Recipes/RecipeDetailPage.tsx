@@ -75,6 +75,7 @@ const RecipeDetailPage: React.FC = () => {
         return (
           <NumberText
             value={row.quantity}
+            format="unit"
             unit={row.productUnit}
             position="right"
           />
@@ -89,20 +90,20 @@ const RecipeDetailPage: React.FC = () => {
   ];
 
   if (isRecipeLoading) {
-    return <div
-      style={{
-        height: "300px",
-        margin: "20px 0",
-        marginBottom: "20px",
-        padding: "30px 50px",
-        textAlign: "center",
-      }}
-    >
-      <Spin tip="Cargando..." ></Spin>
-    </div>;
+    return (
+      <div
+        style={{
+          height: "300px",
+          margin: "20px 0",
+          marginBottom: "20px",
+          padding: "30px 50px",
+          textAlign: "center",
+        }}
+      >
+        <Spin tip="Cargando..."></Spin>
+      </div>
+    );
   }
-
-
 
   return (
     <>
@@ -219,7 +220,14 @@ const RecipeDetailPage: React.FC = () => {
         }}
       >
         {recipe?.isCurrent != undefined ? (
-          <Badge.Ribbon color={recipe.isCurrent ? "blue" : "orange"} text={recipe.isCurrent ? "Ultima Revisión" : `Revision ${recipe?.revision}`} />
+          <Badge.Ribbon
+            color={recipe.isCurrent ? "blue" : "orange"}
+            text={
+              recipe.isCurrent
+                ? "Ultima Revisión"
+                : `Revision ${recipe?.revision}`
+            }
+          />
         ) : (
           <></>
         )}

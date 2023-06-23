@@ -1,7 +1,6 @@
 export type Status = "ACTIVE" | "INACTIVE";
 export type Role = "ADMIN" | "OPERATOR";
 export type Unit = "UNITS" | "KG" | "L" | "OTHER";
-
 export type StockMovementType =
   | "PURCHASE"
   | "ADJUST"
@@ -94,6 +93,7 @@ export interface StockMovement {
   status: Status;
   type: StockMovementType;
   date: string;
+  documentNumber: string;
   entityId?: string;
   entityName?: string;
   createdByUserId: string;

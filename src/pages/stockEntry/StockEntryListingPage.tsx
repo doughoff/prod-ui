@@ -46,7 +46,6 @@ const StockEntryListingPage: React.FC = () => {
     500,
     [search]
   );
-
   return (
     <>
       <PageHeader
@@ -85,7 +84,12 @@ const StockEntryListingPage: React.FC = () => {
             }}
             onSearch={() => setFilters((prev) => ({ ...prev, search }))}
           />
-          <Button icon={<PlusOutlined />}>Nueva Entrada</Button>
+          <Button
+            icon={<PlusOutlined />}
+            onClick={() => navigate("/app/stock_entry/create")}
+          >
+            Nueva Entrada
+          </Button>
         </div>
         <Table
           rowKey="id"
@@ -112,6 +116,15 @@ const StockEntryListingPage: React.FC = () => {
               },
             },
             {
+              title: "Documento",
+              dataIndex: "documentNumber",
+              width: 100,
+              key: "documentNumber",
+              render: (_, row) => {
+                return <NumberText value={row.documentNumber} />;
+              },
+            },
+            {
               title: "Nombre del Proveedor",
               dataIndex: "entityName",
               key: "entityName",
@@ -120,11 +133,11 @@ const StockEntryListingPage: React.FC = () => {
               title: "Total",
               dataIndex: "total",
               align: "right",
-              key: "averageCost",
+              key: "total",
               width: 250,
               render: (_, row) => (
                 <NumberText
-                  value={row?.total}
+                  value={row.total}
                   format="currency"
                   position="right"
                 />
@@ -141,7 +154,7 @@ const StockEntryListingPage: React.FC = () => {
                   type="link"
                   size="small"
                   onClick={() => {
-                    navigate(`/app/products/info/${row.id}`);
+                    navigate(`/app/stock_entry/info/${row.id}`);
                   }}
                   icon={<EyeOutlined />}
                 />

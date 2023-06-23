@@ -19,7 +19,11 @@ import {
   RecipeDetailPage,
   RecipesListingPage,
 } from "./pages/Recipes";
-import StockEntryListingPage from './pages/stockEntry/StockEntryListingPage';
+import {
+  CreateStockEntryPage,
+  StockEntryDetailPage,
+  StockEntryListingPage,
+} from "./pages/stockEntry";
 
 const App: React.FunctionComponent = () => {
   const queryClient = new QueryClient({
@@ -122,9 +126,13 @@ const App: React.FunctionComponent = () => {
             },
             {
               path: "/app/stock_entry/create",
-              element: <CreateRecipeFormPage />,
+              element: <CreateStockEntryPage />,
             },
-          ]
+            {
+              path: "/app/stock_entry/info/:stockEntryId",
+              element: <StockEntryDetailPage />,
+            },
+          ],
         },
       ],
     },

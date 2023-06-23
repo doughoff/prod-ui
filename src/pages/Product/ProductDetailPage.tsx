@@ -106,6 +106,7 @@ const ProductDetailPage: React.FC = () => {
       <PageDetails>
         <Descriptions
           bordered
+          size="small"
           column={1}
           style={{ background: "white", borderRadius: "8px" }}
         >
