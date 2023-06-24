@@ -24,7 +24,7 @@ export function unitFormatter(
       case "KG":
         return `${value?.toFixed(3)} KG`;
       case "L":
-        return `${value?.toFixed(3)}  L`;
+        return `${value?.toFixed(3)} L `;
       case "UNITS":
         return `${value?.toFixed(3)} Un`;
       default:

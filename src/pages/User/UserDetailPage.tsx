@@ -60,9 +60,9 @@ const UserDetailPage: React.FC = () => {
   const disableUser = (data: User) => {
     return editUser(
       {
-        name: data?.name,
-        email: "test1234@test.com",
-        roles: data?.roles,
+        name: data.name,
+        email: data.email,
+        roles: data.roles,
         status: isUserActive ? "INACTIVE" : "ACTIVE",
       },
       userId
@@ -73,7 +73,7 @@ const UserDetailPage: React.FC = () => {
     mutationFn: disableUser,
     onSuccess: () => {
       message.success(
-        `Usario ${isUserActive ? "Desactivado" : "Activado"} correctamente`
+        `Usuario ${isUserActive ? "Desactivado" : "Activado"} correctamente`
       );
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
@@ -159,7 +159,6 @@ const UserDetailPage: React.FC = () => {
 
       <PageDetails>
         <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
