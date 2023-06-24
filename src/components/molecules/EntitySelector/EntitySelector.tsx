@@ -22,7 +22,7 @@ const EntitySelector: React.FC<EntitySelectorProps> = React.forwardRef(
         status: ["ACTIVE"],
       });
 
-      return suppliers.map((supplier) => ({
+      return suppliers.items.map((supplier) => ({
         label: `${supplier.name} - ${
           supplier.ruc ? "RUC: " + supplier.ruc : "CI: " + supplier.ci
         }`,

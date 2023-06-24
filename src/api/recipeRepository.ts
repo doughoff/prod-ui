@@ -1,4 +1,4 @@
-import { Recipe, Status, api } from ".";
+import { QueryResult, Recipe, Status, api } from ".";
 
 interface GetRecipes {
   status?: Status[];
@@ -19,13 +19,12 @@ interface CreateAndEditRecipes {
 interface DeleteRecipeGroup {
   status: Status;
 }
-
-const getRecipes = (params: GetRecipes): Promise<Recipe[]> => {
+const getRecipes = (params: GetRecipes): Promise<QueryResult<Recipe>> => {
   return new Promise((resolve, reject) => {
     api
       .get("/recipes", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);

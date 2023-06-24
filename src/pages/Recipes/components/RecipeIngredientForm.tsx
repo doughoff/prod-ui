@@ -101,8 +101,9 @@ const RecipeIngredientForm: React.FC<Props> = ({
           <Controller
             name="productId"
             control={control}
-            defaultValue=""
-            render={({ field }) => <ProductSelector {...field} />}
+            render={({ field }) => (
+              <ProductSelector placeholder="Buscar Producto" {...field} />
+            )}
           />
         </Form.Item>
         <Form.Item

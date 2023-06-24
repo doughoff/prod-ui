@@ -6,10 +6,9 @@ import {
   PageHeader,
   StatusTag,
 } from "../../components";
-import { Button, Input, Select, Table } from "antd";
+import { Button, Input, Pagination, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import { ColumnsType } from "antd/es/table";
-import { PageFilters, Recipe, Status, getRecipes } from "../../api";
+import { PageFilters, Status, getRecipes } from "../../api";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { statusToStatusList } from "../../utils/enumListParsers";
@@ -36,74 +35,6 @@ const RecipesListingPage: React.FC = () => {
       });
     },
   });
-
-  const columns: ColumnsType<Recipe> = [
-    {
-      title: "Fecha de creación",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 100,
-      render: (_, row) => (
-        <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
-      ),
-    },
-    {
-      title: "Cantidad",
-      dataIndex: "quantity",
-      width: 180,
-      key: "quantity",
-      render: (_, row) => {
-        return (
-          <NumberText
-            value={row.producedQuantity}
-            unit={row.productUnit}
-            position="right"
-          />
-        );
-      },
-    },
-
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Producto Final",
-      dataIndex: "productId",
-      key: "productId",
-      render: (_, row) => {
-        return <span>{row.productName}</span>;
-      },
-    },
-    {
-      title: "Estado",
-      dataIndex: "status",
-      width: 80,
-      key: "status",
-      render: (_, row) => {
-        return <StatusTag status={row.status as Status} />;
-      },
-    },
-
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      align: "center",
-      key: "actions",
-      width: 100,
-      render: (_, row) => (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => {
-            navigate(`/app/recipes/info/${row.recipeId}`);
-          }}
-          icon={<EyeOutlined />}
-        />
-      ),
-    },
-  ];
 
   return (
     <>
@@ -156,8 +87,94 @@ const RecipesListingPage: React.FC = () => {
           loading={isLoading}
           className="mt-3"
           size="small"
-          columns={columns}
-          dataSource={result}
+          columns={[
+            {
+              title: "Fecha de creación",
+              dataIndex: "createdAt",
+              key: "createdAt",
+              width: 100,
+              render: (_, row) => (
+                <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
+              ),
+            },
+            {
+              title: "Cantidad",
+              dataIndex: "quantity",
+              width: 180,
+              key: "quantity",
+              render: (_, row) => {
+                return (
+                  <NumberText
+                    value={row.producedQuantity}
+                    unit={row.productUnit}
+                    position="right"
+                  />
+                );
+              },
+            },
+
+            {
+              title: "Nombre",
+              dataIndex: "name",
+              key: "name",
+            },
+            {
+              title: "Producto Final",
+              dataIndex: "productId",
+              key: "productId",
+              render: (_, row) => {
+                return <span>{row.productName}</span>;
+              },
+            },
+            {
+              title: "Estado",
+              dataIndex: "status",
+              width: 80,
+              key: "status",
+              render: (_, row) => {
+                return <StatusTag status={row.status as Status} />;
+              },
+            },
+
+            {
+              title: "Acciones",
+              dataIndex: "actions",
+              align: "center",
+              key: "actions",
+              width: 100,
+              render: (_, row) => (
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    navigate(`/app/recipes/info/${row.recipeId}`);
+                  }}
+                  icon={<EyeOutlined />}
+                />
+              ),
+            },
+          ]}
+          dataSource={result?.items}
+        />
+        <Pagination
+          className="mt-3 float-right"
+          showSizeChanger
+          total={result?.totalCount || 0}
+          current={filters.page}
+          pageSize={filters.pageSize}
+          onChange={(page) => {
+            setFilters((prev) => ({
+              ...prev,
+              page,
+            }));
+          }}
+          onShowSizeChange={(current, size) => {
+            setFilters((prev) => ({
+              ...prev,
+              page: current,
+              pageSize: size,
+            }));
+          }}
         />
       </PageContent>
     </>

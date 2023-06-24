@@ -3,16 +3,15 @@ import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Card,
-  FormItemGroup,
   NumberText,
   PageContent,
+  PageDetails,
   PageHeader,
   ProductSelector,
 } from "../../components";
 import {
   Button,
-  Divider,
+  Descriptions,
   Form,
   Input,
   InputNumber,
@@ -85,6 +84,15 @@ const CreateRecipeFormPage: React.FC = () => {
     return totalSum;
   }, [ingredients]);
 
+  const costoUnitario = React.useMemo(() => {
+    const costoUnitario = Math.round(totalSum / watch("producedQuantity"));
+    if (costoUnitario) {
+      return costoUnitario;
+    } else {
+      return 0;
+    }
+  }, [ingredients, totalSum, watch("producedQuantity")]);
+
   return (
     <>
       <PageHeader
@@ -115,8 +123,7 @@ const CreateRecipeFormPage: React.FC = () => {
           </div>
         }
       />
-      <Card>
-        <Typography.Title level={4}>Formula</Typography.Title>
+      <PageDetails>
         <Form
           ref={formRef}
           onFinish={handleSubmit((data) => {
@@ -128,9 +135,22 @@ const CreateRecipeFormPage: React.FC = () => {
             }
           })}
         >
-          <Divider className="my-3" />
-          <FormItemGroup
-            inputs={
+          <Descriptions
+            size="small"
+            bordered
+            column={3}
+            style={{ background: "white", borderRadius: "8px" }}
+          >
+            <Descriptions.Item
+              label="Nombre de la Formula"
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+              span={3}
+            >
               <Form.Item
                 validateStatus={errors.name ? "error" : ""}
                 help={errors.name?.message}
@@ -144,15 +164,21 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Nombre de la Formula"
-          />
-          <Divider className="mt-0" />
-          <FormItemGroup
-            inputs={
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Producto a Producir"
+              span={2}
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+            >
               <Form.Item
                 validateStatus={errors.productId ? "error" : ""}
                 help={errors.productId?.message}
+                className="w-full"
               >
                 <Controller
                   name="productId"
@@ -165,12 +191,17 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Producto a Producir"
-          />
-          <Divider className="mt-0" />
-          <FormItemGroup
-            inputs={
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Cantidad a Producir"
+              span={1}
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+            >
               <Form.Item
                 validateStatus={errors.producedQuantity ? "error" : ""}
                 help={errors.producedQuantity?.message}
@@ -188,11 +219,10 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Cantidad a Producir"
-          />
+            </Descriptions.Item>
+          </Descriptions>
         </Form>
-      </Card>
+      </PageDetails>
       <PageContent>
         <div className="flex justify-between align-baseline mb-3">
           <Typography.Title level={4} className="">
@@ -202,7 +232,7 @@ const CreateRecipeFormPage: React.FC = () => {
             <span>
               <strong>Costo por Unidad: </strong>
               <NumberText
-                value={Math.round(totalSum / watch("producedQuantity") ?? 0)}
+                value={costoUnitario}
                 format="currency"
                 position="right"
               />

@@ -16,11 +16,11 @@ import {
   Form,
   Input,
   InputNumber,
+  Spin,
   Table,
   Typography,
   message,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
 import { editRecipes, getRecipeById } from "../../api";
 import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { RecipeIngredient, recipeSchema } from "./recipeSchema";
@@ -61,7 +61,7 @@ const EditRecipeFormPage: React.FC = () => {
 
   const { recipeId } = useParams();
 
-  const { data: recipe } = useQuery({
+  const { data: recipe, isLoading } = useQuery({
     queryKey: ["recipe", recipeId],
     queryFn: () =>
       getRecipeById(recipeId)
@@ -125,66 +125,6 @@ const EditRecipeFormPage: React.FC = () => {
     },
   });
 
-  const columns: ColumnsType<RecipeIngredient> = [
-    {
-      title: "Cantidad",
-      dataIndex: "quantity",
-      width: 80,
-      key: "quantity",
-      render: (_, row) => {
-        return (
-          <NumberText value={row.quantity} unit={row.unit} position="right" />
-        );
-      },
-    },
-    {
-      title: "Producto",
-      dataIndex: "productName",
-      key: "productName",
-    },
-    {
-      title: "Costo Unitario",
-      dataIndex: "averageCost",
-      key: "averageCost",
-      align: "right",
-      width: 125,
-      render: (_, row) => (
-        <NumberText
-          value={row.averageCost}
-          format="currency"
-          position="right"
-        />
-      ),
-    },
-    {
-      title: "Total",
-      align: "right",
-      dataIndex: "total",
-      key: "averageCost",
-      width: 165,
-      render: (_, row) => (
-        <NumberText value={row.total} format="currency" position="right" />
-      ),
-    },
-    {
-      title: "Acciones",
-      key: "actions",
-      dataIndex: "actions",
-      width: 100,
-      render: (_, row) => (
-        <div className="flex flex-row-reverse pr-1">
-          <Button
-            danger
-            onClick={() => {
-              removeItem(ingredients, row.productId);
-            }}
-            icon={<DeleteOutlined />}
-          />
-        </div>
-      ),
-    },
-  ];
-
   const totalSum = React.useMemo(() => {
     const totalSum = ingredients?.reduce(
       (sum: number, ingredient: RecipeIngredient) => sum + ingredient.total,
@@ -192,6 +132,22 @@ const EditRecipeFormPage: React.FC = () => {
     );
     return totalSum;
   }, [ingredients]);
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          height: "300px",
+          margin: "20px 0",
+          marginBottom: "20px",
+          padding: "30px 50px",
+          textAlign: "center",
+        }}
+      >
+        <Spin tip="Cargando..."></Spin>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -341,7 +297,73 @@ const EditRecipeFormPage: React.FC = () => {
         />
 
         <Table
-          columns={columns}
+          columns={[
+            {
+              title: "Cantidad",
+              dataIndex: "quantity",
+              width: 80,
+              key: "quantity",
+              render: (_, row) => {
+                return (
+                  <NumberText
+                    value={row.quantity}
+                    unit={row.unit}
+                    position="right"
+                  />
+                );
+              },
+            },
+            {
+              title: "Producto",
+              dataIndex: "productName",
+              key: "productName",
+            },
+            {
+              title: "Costo Unitario",
+              dataIndex: "averageCost",
+              key: "averageCost",
+              align: "right",
+              width: 125,
+              render: (_, row) => (
+                <NumberText
+                  value={row.averageCost}
+                  format="currency"
+                  position="right"
+                />
+              ),
+            },
+            {
+              title: "Total",
+              align: "right",
+              dataIndex: "total",
+              key: "averageCost",
+              width: 165,
+              render: (_, row) => (
+                <NumberText
+                  value={row.total}
+                  format="currency"
+                  position="right"
+                />
+              ),
+            },
+            {
+              title: "Acciones",
+              key: "actions",
+              dataIndex: "actions",
+              width: 100,
+              render: (_, row) => (
+                <div className="flex flex-row-reverse pr-1">
+                  <Button
+                    danger
+                    onClick={() => {
+                      removeItem(ingredients, row.productId);
+                    }}
+                    icon={<DeleteOutlined />}
+                  />
+                </div>
+              ),
+            },
+          ]}
           dataSource={ingredients}
           rowKey="productId"
           pagination={false}

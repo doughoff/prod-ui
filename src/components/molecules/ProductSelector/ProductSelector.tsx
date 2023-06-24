@@ -22,7 +22,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = React.forwardRef(
         status: ["ACTIVE"],
       });
 
-      return products.map((product) => ({
+      return products.items.map((product) => ({
         label: `${product.barcode} - ${product.name}`,
         value: product.id,
       }));

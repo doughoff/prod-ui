@@ -13,7 +13,6 @@ import {
   Typography,
   message,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Ingredient,
@@ -64,30 +63,6 @@ const RecipeDetailPage: React.FC = () => {
     );
     return totalSum;
   }, [recipe]);
-
-  const columns: ColumnsType<Ingredient> = [
-    {
-      title: "Cantidad",
-      dataIndex: "quantity",
-      width: 80,
-      key: "quantity",
-      render: (_, row) => {
-        return (
-          <NumberText
-            value={row.quantity}
-            format="unit"
-            unit={row.productUnit}
-            position="right"
-          />
-        );
-      },
-    },
-    {
-      title: "Producto",
-      dataIndex: "productName",
-      key: "productName",
-    },
-  ];
 
   if (isRecipeLoading) {
     return (
@@ -240,7 +215,59 @@ const RecipeDetailPage: React.FC = () => {
               label: "Informacion",
               children: (
                 <Table
-                  columns={columns}
+                  columns={[
+                    {
+                      title: "Cantidad",
+                      dataIndex: "quantity",
+                      width: 80,
+                      key: "quantity",
+                      render: (_, row) => {
+                        return (
+                          <NumberText
+                            value={row.quantity}
+                            format="unit"
+                            unit={row.productUnit}
+                            position="right"
+                          />
+                        );
+                      },
+                    },
+                    {
+                      title: "Producto",
+                      dataIndex: "productName",
+                      key: "productName",
+                    },
+                    {
+                      title: "Costo Unitario",
+                      dataIndex: "averageCost",
+                      key: "averageCost",
+                      align: "right",
+                      width: 125,
+                      render: (_, row) => (
+                        <NumberText
+                          value={row.averageCost ?? 1500}
+                          format="currency"
+                          position="right"
+                        />
+                      ),
+                    },
+                    {
+                      title: "Total",
+                      align: "right",
+                      dataIndex: "total",
+                      key: "averageCost",
+                      width: 165,
+                      render: (_, row) => (
+                        <NumberText
+                          value={Math.round(
+                            (row.averageCost ?? 1500) * row.quantity
+                          )}
+                          format="currency"
+                          position="right"
+                        />
+                      ),
+                    },
+                  ]}
                   dataSource={recipe?.ingredients}
                   rowKey="Id"
                   pagination={false}
@@ -301,9 +328,12 @@ const RecipeDetailPage: React.FC = () => {
                             <>
                               <p>
                                 <Button
-                                  onClick={() =>
-                                    setSelectedRecipe(recipeVersion.recipeId)
-                                  }
+                                  onClick={() => {
+                                    setSelectedRecipe(recipeVersion.recipeId);
+                                    navigate(
+                                      `/app/recipes/info/${recipeVersion.recipeId}`
+                                    );
+                                  }}
                                 >
                                   Ver Revisión {recipeVersion.revision}
                                 </Button>
