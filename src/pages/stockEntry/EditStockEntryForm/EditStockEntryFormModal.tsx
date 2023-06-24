@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Modal, message } from "antd";
+import { Button, DatePicker, Divider, Form, Modal, message } from "antd";
 import React from "react";
 import * as z from "zod";
 
@@ -75,6 +75,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
       footer={null}
     >
       <Form layout="vertical" onFinish={handleSubmit((data) => mutate(data))}>
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -107,6 +108,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
           }
           title="Nombre"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -125,7 +127,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
           }
           title="Código de Barras"
         />
-
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -148,7 +150,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
           }
           title="Unidad"
         />
-
+        <Divider className="my-0" />
         <Form.Item className="pt-3">
           <div className="flex justify-end">
             <Button

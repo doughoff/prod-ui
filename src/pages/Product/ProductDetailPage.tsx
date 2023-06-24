@@ -155,6 +155,9 @@ const ProductDetailPage: React.FC = () => {
               position="right"
             />
           </Descriptions.Item>
+          <Descriptions.Item label="Factor de Conversión">
+            <NumberText value={data?.conversionFactor} />
+          </Descriptions.Item>
           <Descriptions.Item label="Precio Promedio">
             <NumberText
               value={data?.averageCost}

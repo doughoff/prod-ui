@@ -1,4 +1,4 @@
-import { Button, Form, Modal, message } from "antd";
+import { Button, Divider, Form, Modal, message } from "antd";
 import React from "react";
 import * as z from "zod";
 import { Input } from "antd";
@@ -89,6 +89,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
       footer={null}
     >
       <Form layout="vertical" onFinish={handleSubmit((data) => mutate(data))}>
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -107,6 +108,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Nombre"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -123,6 +125,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="RUC"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -139,6 +142,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="CI"
         />
+        <Divider className="mt-0" />
         <Form.Item className="pt-3">
           <div className="flex justify-end">
             <Button

@@ -7,11 +7,9 @@ import {
   StatusTag,
 } from "../../components";
 import dayjs from "dayjs";
-import { Entities, PageFilters, Status, getEntitites } from "../../api";
-import { ColumnsType } from "antd/es/table";
-import { Button, Input, Select, Table } from "antd";
+import { PageFilters, Status, getEntitites } from "../../api";
+import { Button, Input, Pagination, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-
 import { useQuery } from "@tanstack/react-query";
 import { CreateSupplierFormModal } from "./CreateSupplierForm";
 import { statusToStatusList } from "../../utils/enumListParsers";
@@ -44,66 +42,6 @@ const SupplierListingPage: React.FC = () => {
       });
     },
   });
-
-  const columns: ColumnsType<Entities> = [
-    {
-      title: "Fecha de creación",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 100,
-      render: (_, row) => (
-        <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
-      ),
-    },
-    {
-      title: "Estado",
-      dataIndex: "status",
-      width: 150,
-      key: "status",
-      render: (_, row) => {
-        return <StatusTag status={row.status as Status} />;
-      },
-    },
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      width: 200,
-      key: "name",
-    },
-    {
-      title: "RUC",
-      dataIndex: "ruc",
-      align: "right",
-      width: 130,
-      key: "RUC",
-      render: (_, row) => <NumberText value={row.ruc} />,
-    },
-    {
-      title: "CI",
-      dataIndex: "ci",
-      align: "right",
-      width: 130,
-      key: "CI",
-      render: (_, row) => <NumberText value={row.ci} />,
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      width: 100,
-      align: "center",
-      render: (_, row) => (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => {
-            navigate(`/app/suppliers/info/${row.id}`);
-          }}
-          icon={<EyeOutlined />}
-        />
-      ),
-    },
-  ];
 
   return (
     <>
@@ -152,8 +90,86 @@ const SupplierListingPage: React.FC = () => {
           loading={isLoading}
           className="mt-3"
           size="small"
-          columns={columns}
-          dataSource={result}
+          columns={[
+            {
+              title: "Fecha de creación",
+              dataIndex: "createdAt",
+              key: "createdAt",
+              width: 100,
+              render: (_, row) => (
+                <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
+              ),
+            },
+            {
+              title: "Estado",
+              dataIndex: "status",
+              width: 150,
+              key: "status",
+              render: (_, row) => {
+                return <StatusTag status={row.status as Status} />;
+              },
+            },
+            {
+              title: "Nombre",
+              dataIndex: "name",
+              width: 200,
+              key: "name",
+            },
+            {
+              title: "RUC",
+              dataIndex: "ruc",
+              align: "right",
+              width: 130,
+              key: "RUC",
+              render: (_, row) => <NumberText value={row.ruc} />,
+            },
+            {
+              title: "CI",
+              dataIndex: "ci",
+              align: "right",
+              width: 130,
+              key: "CI",
+              render: (_, row) => <NumberText value={row.ci} />,
+            },
+            {
+              title: "Acciones",
+              dataIndex: "actions",
+              key: "actions",
+              width: 100,
+              align: "center",
+              render: (_, row) => (
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    navigate(`/app/suppliers/info/${row.id}`);
+                  }}
+                  icon={<EyeOutlined />}
+                />
+              ),
+            },
+          ]}
+          dataSource={result?.items}
+        />
+        <Pagination
+          className="mt-3 float-right"
+          showSizeChanger
+          total={result?.totalCount || 0}
+          current={filters.page}
+          pageSize={filters.pageSize}
+          onChange={(page) => {
+            setFilters((prev) => ({
+              ...prev,
+              page,
+            }));
+          }}
+          onShowSizeChange={(current, size) => {
+            setFilters((prev) => ({
+              ...prev,
+              page: current,
+              pageSize: size,
+            }));
+          }}
         />
         <CreateSupplierFormModal
           isModalOpen={isModalOpen}
