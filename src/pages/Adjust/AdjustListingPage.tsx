@@ -10,13 +10,12 @@ import dayjs from "dayjs";
 import { PageFilters, Status } from "../../api";
 import { Button, Input, Pagination, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-
 import { useQuery } from "@tanstack/react-query";
 import { getStockMovements } from "../../api/stockMovementRepository";
 import { statusToStatusList } from "../../utils/enumListParsers";
 import { useDebouncedEffect } from "../../hooks";
 
-const StockEntryListingPage: React.FC = () => {
+const AdjustListingPage: React.FC = () => {
   const navigate = useNavigate();
   const [search, setSearch] = React.useState<string | undefined>(undefined);
   const [filters, setFilters] = React.useState<PageFilters>({
@@ -27,14 +26,14 @@ const StockEntryListingPage: React.FC = () => {
   });
 
   const { data: result, isLoading } = useQuery({
-    queryKey: ["stock_entries", filters],
+    queryKey: ["adjusts", filters],
     queryFn: () => {
       return getStockMovements({
         search: filters.search,
         status: statusToStatusList(filters.status),
         offset: (filters.page - 1) * filters.pageSize,
         limit: filters.pageSize,
-        type: ["PURCHASE"],
+        type: ["ADJUST"],
       });
     },
   });
@@ -54,10 +53,10 @@ const StockEntryListingPage: React.FC = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: "Entradas de Stock",
+            title: "Ajuste de Estoque",
           },
         ]}
-        pageTitle="Entradas de Stock"
+        pageTitle="Ajuste de Estoque"
       />
       <PageContent>
         <div className="flex justify-between gap-3 ">
@@ -77,7 +76,7 @@ const StockEntryListingPage: React.FC = () => {
             ]}
           />
           <Input.Search
-            placeholder="Buscar por nombre del proveedor"
+            placeholder="Buscar ajuste de estoque"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -86,7 +85,7 @@ const StockEntryListingPage: React.FC = () => {
           />
           <Button
             icon={<PlusOutlined />}
-            onClick={() => navigate("/app/stock_entry/create")}
+            onClick={() => navigate("/app/adjust/create")}
           >
             Nueva Entrada
           </Button>
@@ -154,7 +153,7 @@ const StockEntryListingPage: React.FC = () => {
                   type="link"
                   size="small"
                   onClick={() => {
-                    navigate(`/app/stock_entry/info/${row.id}`);
+                    navigate(`/app/adjust/info/${row.id}`);
                   }}
                   icon={<EyeOutlined />}
                 />
@@ -189,4 +188,4 @@ const StockEntryListingPage: React.FC = () => {
   );
 };
 
-export default StockEntryListingPage;
+export default AdjustListingPage;

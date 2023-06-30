@@ -9,66 +9,66 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckOutlined } from "@ant-design/icons";
 import { StockMovement } from "../../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EntitySelector, FormItemGroup } from "../../../components";
-import { stockEntrySchema } from "../stockEntrySchema";
 import { editStockMovements } from "../../../api/stockMovementRepository";
 import dayjs from "dayjs";
+import { adjustSchema } from "../adjustSchema";
+import { EntitySelector, FormItemGroup } from "../../../components";
 interface ProductFormModalProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  stockEntryData?: StockMovement;
+  stockAdjustData?: StockMovement;
 }
 
-type CreateStockEntryPayloadType = z.infer<typeof stockEntrySchema>;
+type CreateAdjustPayloadType = z.infer<typeof adjustSchema>;
 
-const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
+const EditAdjustModal: React.FC<ProductFormModalProps> = ({
   isModalOpen,
   setIsModalOpen,
-  stockEntryData,
+  stockAdjustData,
 }) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateStockEntryPayloadType>({
-    resolver: zodResolver(stockEntrySchema),
+  } = useForm<CreateAdjustPayloadType>({
+    resolver: zodResolver(adjustSchema),
   });
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
   const queryClient = useQueryClient();
-  const isProductActive = stockEntryData?.status === "ACTIVE" ?? false;
+  const isAdjustActive = stockAdjustData?.status === "ACTIVE" ?? false;
 
-  const editNewStockEntry = React.useCallback(
-    (data: CreateStockEntryPayloadType) => {
+  const editNewAdjust = React.useCallback(
+    (data: CreateAdjustPayloadType) => {
       return editStockMovements(
         {
           date: data.date,
           entityId: data.supplierId ?? "",
           documentNumber: data.documentNumber,
-          status: isProductActive ? "ACTIVE" : "INACTIVE",
+          status: isAdjustActive ? "ACTIVE" : "INACTIVE",
         },
-        stockEntryData?.id
+        stockAdjustData?.id
       );
     },
-    [stockEntryData]
+    [stockAdjustData]
   );
   const { isPending, mutate } = useMutation({
-    mutationFn: editNewStockEntry,
+    mutationFn: editNewAdjust,
     onSuccess: () => {
-      message.success("Producto editado correctamente");
-      queryClient.invalidateQueries({ queryKey: ["stock_entry"] });
+      message.success("Ajuste editado correctamente");
+      queryClient.invalidateQueries({ queryKey: ["adjust"] });
       setIsModalOpen(false);
     },
     onError: () => {
-      message.error("Error al editar el producto");
+      message.error("Error al editar el ajuste de estoque");
     },
   });
 
   return (
     <Modal
-      title="Editar Producto"
+      title="Editar Entrada"
       open={isModalOpen}
       width="42rem"
       onCancel={handleCancel}
@@ -85,7 +85,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
               <Controller
                 name="date"
                 control={control}
-                defaultValue={stockEntryData?.date}
+                defaultValue={stockAdjustData?.date}
                 render={({ field }) => (
                   <DatePicker
                     className="w-full"
@@ -118,7 +118,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
               <Controller
                 name="documentNumber"
                 control={control}
-                defaultValue={stockEntryData?.documentNumber}
+                defaultValue={stockAdjustData?.documentNumber}
                 render={({ field }) => (
                   <Input placeholder="Numero de Documento" {...field} />
                 )}
@@ -138,7 +138,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
               <Controller
                 name="supplierId"
                 control={control}
-                defaultValue={stockEntryData?.entityId}
+                defaultValue={stockAdjustData?.entityId}
                 render={({ field }) => (
                   <EntitySelector
                     placeholder="Selecciona un Proveedor"
@@ -166,7 +166,7 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
               icon={<CheckOutlined />}
               loading={isPending}
             >
-              Editar Producto
+              Editar Ajuste
             </Button>
           </div>
         </Form.Item>
@@ -174,4 +174,4 @@ const EditStockEntryModal: React.FC<ProductFormModalProps> = ({
     </Modal>
   );
 };
-export default EditStockEntryModal;
+export default EditAdjustModal;

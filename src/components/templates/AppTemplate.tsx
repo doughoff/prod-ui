@@ -7,9 +7,11 @@ import {
   ShopOutlined,
   CaretUpFilled,
   CaretDownOutlined,
-  LoginOutlined,
   ExperimentOutlined,
   UnorderedListOutlined,
+  SwapOutlined,
+  SelectOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { Layout, Button, Dropdown, Menu } from "antd";
 
@@ -147,8 +149,18 @@ const AppTemplate: React.FC = () => {
             },
             {
               path: "/app/stock_entry",
-              icon: <LoginOutlined />,
+              icon: <SelectOutlined />,
               label: <Link to="/app/stock_entry">Entrada de Estoque</Link>,
+            },
+            {
+              path: "/app/adjust",
+              icon: <SwapOutlined />,
+              label: <Link to="/app/adjust">Ajuste de Estoque</Link>,
+            },
+            {
+              path: "/app/sales",
+              icon: <ShoppingCartOutlined />,
+              label: <Link to="/app/sales">Ventas</Link>,
             },
             {
               path: "/app/recipes",

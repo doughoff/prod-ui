@@ -23,7 +23,13 @@ import {
   CreateStockEntryPage,
   StockEntryDetailPage,
   StockEntryListingPage,
-} from "./pages/stockEntry";
+} from "./pages/StockEntry";
+import { CreateSalePage, SaleDetailPage, SaleListingPage } from "./pages/Sales";
+import {
+  AdjustDetailPage,
+  AdjustListingPage,
+  CreateAdjustPage,
+} from "./pages/Adjust";
 
 const App: React.FunctionComponent = () => {
   const queryClient = new QueryClient({
@@ -131,6 +137,40 @@ const App: React.FunctionComponent = () => {
             {
               path: "/app/stock_entry/info/:stockEntryId",
               element: <StockEntryDetailPage />,
+            },
+          ],
+        },
+        {
+          path: "/app/adjust",
+          children: [
+            {
+              path: "/app/adjust",
+              element: <AdjustListingPage />,
+            },
+            {
+              path: "/app/adjust/create",
+              element: <CreateAdjustPage />,
+            },
+            {
+              path: "/app/adjust/info/:adjustId",
+              element: <AdjustDetailPage />,
+            },
+          ],
+        },
+        {
+          path: "/app/sales",
+          children: [
+            {
+              path: "/app/sales",
+              element: <SaleListingPage />,
+            },
+            {
+              path: "/app/sales/create",
+              element: <CreateSalePage />,
+            },
+            {
+              path: "/app/sales/info/:saleId",
+              element: <SaleDetailPage />,
             },
           ],
         },

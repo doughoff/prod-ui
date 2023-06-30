@@ -25,20 +25,20 @@ import {
   editStockMovements,
   getStockMovementsById,
 } from "../../api/stockMovementRepository";
-import { EditStockEntryFormModal } from "./EditStockEntryForm";
+import { EditSaleFormModal } from "./EditSaleForm";
 
-const StockEntryDetailPage: React.FC = () => {
-  const { stockEntryId } = useParams();
+const SaleDetailPage: React.FC = () => {
+  const { saleId } = useParams();
   const queryClient = useQueryClient();
 
   const { data: result, isLoading } = useQuery({
-    queryKey: ["stock_entry", stockEntryId],
+    queryKey: ["sale", saleId],
     queryFn: () => {
-      return getStockMovementsById(stockEntryId);
+      return getStockMovementsById(saleId);
     },
   });
 
-  const isRecipeActive = result?.status === "ACTIVE" ?? false;
+  const isSaleActive = result?.status === "ACTIVE" ?? false;
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   const showEditModal = () => {
@@ -105,10 +105,10 @@ const StockEntryDetailPage: React.FC = () => {
       {
         date: data.date,
         entityId: data.entityId ?? "",
-        status: isRecipeActive ? "INACTIVE" : "ACTIVE",
+        status: isSaleActive ? "INACTIVE" : "ACTIVE",
         documentNumber: data.documentNumber,
       },
-      stockEntryId
+      saleId
     );
   };
 
@@ -116,13 +116,13 @@ const StockEntryDetailPage: React.FC = () => {
     mutationFn: disableStockMovement,
     onSuccess: () => {
       message.success(
-        `Entrada ${isRecipeActive ? "Desactivada" : "Activado"} correctamente`
+        `Entrada ${isSaleActive ? "Desactivada" : "Activado"} correctamente`
       );
       queryClient.invalidateQueries({ queryKey: ["stock_entry"] });
     },
     onError: () => {
       message.error(
-        `Error al ${isRecipeActive ? "Desactivar" : "Activar"}  la entrada`
+        `Error al ${isSaleActive ? "Desactivar" : "Activar"}  la entrada`
       );
     },
   });
@@ -150,16 +150,16 @@ const StockEntryDetailPage: React.FC = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: <Link to="/app/stock_entry">Entradas de Estoque</Link>,
+            title: <Link to="/app/sales">Ventas</Link>,
           },
           {
-            title: "Información de la Entrada",
+            title: "Información de la Venta",
           },
         ]}
         content={
           <div className="flex justify-between">
             <Typography.Title level={3}>
-              {"Información de la Entrada"}
+              {"Información de la Venta"}
             </Typography.Title>
 
             <div className="flex gap-2">
@@ -171,7 +171,7 @@ const StockEntryDetailPage: React.FC = () => {
                 <Popconfirm
                   placement="bottom"
                   title={
-                    isRecipeActive ? "Desactivar Producto" : "Activar Producto"
+                    isSaleActive ? "Desactivar Producto" : "Activar Producto"
                   }
                   description="¿Está seguro que desea cambiar el estado del producto?"
                   okText="Sí"
@@ -180,13 +180,11 @@ const StockEntryDetailPage: React.FC = () => {
                 >
                   <Button
                     type="primary"
-                    danger={isRecipeActive}
+                    danger={isSaleActive}
                     loading={isPending}
-                    icon={
-                      isRecipeActive ? <DeleteOutlined /> : <CheckOutlined />
-                    }
+                    icon={isSaleActive ? <DeleteOutlined /> : <CheckOutlined />}
                   >
-                    {isRecipeActive ? "Desactivar" : "Activar"}
+                    {isSaleActive ? "Desactivar" : "Activar"}
                   </Button>
                 </Popconfirm>
               )}
@@ -239,8 +237,8 @@ const StockEntryDetailPage: React.FC = () => {
           className="mb-6"
         />
       </PageContent>
-      <EditStockEntryFormModal
-        stockEntryData={result}
+      <EditSaleFormModal
+        saleData={result}
         isModalOpen={isEditModalOpen}
         setIsModalOpen={setIsEditModalOpen}
       />
@@ -248,4 +246,4 @@ const StockEntryDetailPage: React.FC = () => {
   );
 };
 
-export default StockEntryDetailPage;
+export default SaleDetailPage;

@@ -21,30 +21,31 @@ import {
 import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { Controller, useForm } from "react-hook-form";
 import dayjs from "dayjs";
-import { StockEntryItems, stockEntrySchema } from "./stockEntrySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StockItemForm } from "./components";
 import { useMutation } from "@tanstack/react-query";
 import { createStockMovement } from "../../api/stockMovementRepository";
+import { AdjustItems, adjustSchema } from "./adjustSchema";
+import { SaleItems } from "../Sales/saleSchema";
+import { AdjustItemForm } from "./components";
 
-type CreateStockEntryPayloadType = z.infer<typeof stockEntrySchema>;
+type CreateAdjustPayloadType = z.infer<typeof adjustSchema>;
 
-const CreateStockEntryPage = () => {
+const CreateAdjustPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formRef = React.useRef<any>();
   const navigate = useNavigate();
-  const [items, setItems] = React.useState<StockEntryItems[]>([]);
+  const [items, setItems] = React.useState<SaleItems[]>([]);
 
   const {
     control,
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<CreateStockEntryPayloadType>({
-    resolver: zodResolver(stockEntrySchema),
+  } = useForm<CreateAdjustPayloadType>({
+    resolver: zodResolver(adjustSchema),
   });
 
-  const removeItem = (data: StockEntryItems) => {
+  const removeItem = (data: AdjustItems) => {
     const filtered = items.filter(
       (i) =>
         i.productId != data.productId ||
@@ -54,10 +55,10 @@ const CreateStockEntryPage = () => {
     setItems(filtered);
   };
 
-  const createNewEntry = React.useCallback(
-    (data: CreateStockEntryPayloadType) => {
+  const createNewSale = React.useCallback(
+    (data: CreateAdjustPayloadType) => {
       return createStockMovement({
-        type: "PURCHASE",
+        type: "SALE",
         date: data.date,
         documentNumber: data?.documentNumber ?? undefined,
         entityId: getValues("supplierId"),
@@ -75,13 +76,13 @@ const CreateStockEntryPage = () => {
   );
 
   const { isPending, mutate } = useMutation({
-    mutationFn: createNewEntry,
+    mutationFn: createNewSale,
     onSuccess: () => {
-      message.success("Entrada Registrada");
-      navigate("/app/stock_entry");
+      message.success("Ajuste Registrado");
+      navigate("/app/adjust");
     },
     onError: () => {
-      message.error("Error al registrar la entrada");
+      message.error("Error al registrar el ajuste");
     },
   });
 
@@ -93,15 +94,17 @@ const CreateStockEntryPage = () => {
             title: <Link to="/app">App</Link>,
           },
           {
-            title: <Link to="/app/stock_entry">Entradas de Estoque</Link>,
+            title: <Link to="/app/adjust">Ajuste de Estoque</Link>,
           },
           {
-            title: "Nueva Entrada",
+            title: "Nuevo Ajuste de Estoque",
           },
         ]}
         content={
           <div className="flex justify-between">
-            <Typography.Title level={3}>Nueva Entrada</Typography.Title>
+            <Typography.Title level={3}>
+              Nuevo Ajuste de Estoque
+            </Typography.Title>
             <Button
               icon={<SaveOutlined />}
               type="primary"
@@ -110,7 +113,7 @@ const CreateStockEntryPage = () => {
               }}
               loading={isPending}
             >
-              Guardar Fromula
+              Guardar
             </Button>
           </div>
         }
@@ -123,7 +126,7 @@ const CreateStockEntryPage = () => {
               return mutate(data);
             } else {
               console.log(data);
-              message.error("La entrada debe tener algun item");
+              message.error("El ajuste de estoque debe tener algun item");
             }
           })}
         >
@@ -224,7 +227,7 @@ const CreateStockEntryPage = () => {
 
       <PageContent>
         <Typography.Title level={4}>Items</Typography.Title>
-        <StockItemForm items={items} setItems={setItems} />
+        <AdjustItemForm items={items} setItems={setItems} />
         <Table
           columns={[
             {
@@ -313,4 +316,4 @@ const CreateStockEntryPage = () => {
   );
 };
 
-export default CreateStockEntryPage;
+export default CreateAdjustPage;
