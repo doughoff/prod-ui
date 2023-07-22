@@ -1,4 +1,4 @@
-import { Product, Status, Unit, api } from '.';
+import { Product, QueryResult, Status, Unit, api } from ".";
 
 interface GetProducts {
   status?: Status[];
@@ -23,17 +23,12 @@ interface EditProduct {
   status: Status;
 }
 
-const getProducts = (params: GetProducts): Promise<Product[]> => {
+const getProducts = (params: GetProducts): Promise<QueryResult<Product>> => {
   return new Promise((resolve, reject) => {
     api
-      .get('/products', {
-        params: {
-          ...params,
-          status: params.status?.join(','),
-        },
-      })
+      .get("/products", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);
@@ -44,7 +39,7 @@ const getProducts = (params: GetProducts): Promise<Product[]> => {
 const createProduct = (params: CreateProduct): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     api
-      .post('/products', params)
+      .post("/products", params)
       .then((res) => {
         console.log(res);
         resolve(true);
@@ -64,7 +59,7 @@ const checkBarcode = (barcode: string): Promise<boolean> => {
         resolve(true);
       })
       .catch((err) => {
-        if (err.code == 'ERR_BAD_REQUEST') {
+        if (err.code == "ERR_BAD_REQUEST") {
           resolve(false);
         } else {
           reject(err);

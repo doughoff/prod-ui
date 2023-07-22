@@ -1,10 +1,10 @@
-import { Recipe, Status, api } from ".";
+import { QueryResult, Recipe, Status, api } from ".";
 
 interface GetRecipes {
-  status?: Status | string;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateAndEditRecipes {
   name: string;
@@ -19,13 +19,12 @@ interface CreateAndEditRecipes {
 interface DeleteRecipeGroup {
   status: Status;
 }
-
-const getRecipes = (params: GetRecipes): Promise<Recipe[]> => {
+const getRecipes = (params: GetRecipes): Promise<QueryResult<Recipe>> => {
   return new Promise((resolve, reject) => {
     api
       .get("/recipes", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);
@@ -49,17 +48,17 @@ const createRecipes = (params: CreateAndEditRecipes): Promise<boolean> => {
 const editRecipes = (
   params: CreateAndEditRecipes,
   recipeID: string | undefined
-): Promise<boolean> => {
+): Promise<Recipe> => {
   return new Promise((resolve, reject) => {
     api
       .put(`/recipes/${recipeID}`, params)
       .then((res) => {
         console.log(res);
-        resolve(true);
+        resolve(res.data);
       })
       .catch((err) => {
         console.log(err);
-        reject(false);
+        reject(err);
       });
   });
 };
@@ -77,7 +76,7 @@ const getRecipeById = (recipesId: string | undefined): Promise<Recipe> => {
 };
 const getRecipeGroup = (
   recipesGroupId: string | undefined
-): Promise<Recipe> => {
+): Promise<Recipe[]> => {
   return new Promise((resolve, reject) => {
     api
       .get(`/recipes_group/${recipesGroupId}`)

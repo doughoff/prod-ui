@@ -47,18 +47,21 @@ const ResetUserPasswordFormModal: React.FC<UserFormModalProps> = ({
 
   const queryClient = useQueryClient();
 
-  const editNewUser = React.useCallback((data: PasswordUserPayloadType) => {
-    return editUser(
-      {
-        name: userData ? userData?.name : "",
-        email: userData ? userData?.email : "",
-        password: data.password,
-        roles: userData ? userData?.roles : [],
-        status: userData ? userData?.status : "ACTIVE",
-      },
-      userData?.id
-    );
-  }, []);
+  const editNewUser = React.useCallback(
+    (data: PasswordUserPayloadType) => {
+      return editUser(
+        {
+          name: userData ? userData?.name : "",
+          email: userData ? userData?.email : "",
+          password: data.password,
+          roles: userData ? userData?.roles : [],
+          status: userData ? userData?.status : "ACTIVE",
+        },
+        userData?.id
+      );
+    },
+    [userData]
+  );
   const { isPending, mutate } = useMutation({
     mutationFn: editNewUser,
     onSuccess: () => {

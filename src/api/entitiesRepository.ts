@@ -1,10 +1,10 @@
-import { Entities, Status, api } from ".";
+import { Entities, QueryResult, Status, api } from ".";
 
 interface GetEntitites {
-  status?: Status | string;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateEntities {
   name: string;
@@ -19,12 +19,12 @@ interface EditEntities {
   status: Status;
 }
 
-const getEntitites = (params: GetEntitites): Promise<Entities[]> => {
+const getEntitites = (params: GetEntitites): Promise<QueryResult<Entities>> => {
   return new Promise((resolve, reject) => {
     api
       .get("/entities", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);

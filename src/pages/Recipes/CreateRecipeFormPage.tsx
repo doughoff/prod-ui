@@ -3,16 +3,15 @@ import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Card,
-  FormItemGroup,
   NumberText,
   PageContent,
+  PageDetails,
   PageHeader,
   ProductSelector,
 } from "../../components";
 import {
   Button,
-  Divider,
+  Descriptions,
   Form,
   Input,
   InputNumber,
@@ -20,9 +19,8 @@ import {
   Typography,
   message,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
 import { createRecipes } from "../../api";
-import { SaveOutlined } from "@ant-design/icons";
+import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { RecipeIngredient, recipeSchema } from "./recipeSchema";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -31,18 +29,24 @@ import { RecipeIngredientForm } from "./components";
 type CreateRecipePayloadType = z.infer<typeof recipeSchema>;
 
 const CreateRecipeFormPage: React.FC = () => {
+  const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const formRef = React.useRef<any>();
   const {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<CreateRecipePayloadType>({
     resolver: zodResolver(recipeSchema),
   });
 
-  const navigate = useNavigate();
-  const formRef = React.useRef<unknown>();
-
   const [ingredients, setIngredients] = React.useState<RecipeIngredient[]>([]);
+
+  const removeItem = (data: RecipeIngredient[], productId: string) => {
+    const filtered = data.filter((item) => item.productId !== productId);
+    setIngredients(filtered);
+  };
 
   const createNewRecipe = React.useCallback(
     (data: CreateRecipePayloadType) => {
@@ -72,24 +76,22 @@ const CreateRecipeFormPage: React.FC = () => {
     },
   });
 
-  const columns: ColumnsType<RecipeIngredient> = [
-    {
-      title: "Producto",
-      dataIndex: "productName",
-      key: "createdAt",
-    },
-    {
-      title: "Cantidad",
-      dataIndex: "quantity",
-      width: 160,
-      key: "quantity",
-      render: (_, row) => {
-        return (
-          <NumberText value={row.quantity} unit={row.unit} position="right" />
-        );
-      },
-    },
-  ];
+  const totalSum = React.useMemo(() => {
+    const totalSum = ingredients.reduce(
+      (sum: number, ingredient: RecipeIngredient) => sum + ingredient.total,
+      0
+    );
+    return totalSum;
+  }, [ingredients]);
+
+  const costoUnitario = React.useMemo(() => {
+    const costoUnitario = Math.round(totalSum / watch("producedQuantity"));
+    if (costoUnitario) {
+      return costoUnitario;
+    } else {
+      return 0;
+    }
+  }, [ingredients, totalSum, watch("producedQuantity")]);
 
   return (
     <>
@@ -121,8 +123,7 @@ const CreateRecipeFormPage: React.FC = () => {
           </div>
         }
       />
-      <Card>
-        <Typography.Title level={4}>Formula</Typography.Title>
+      <PageDetails>
         <Form
           ref={formRef}
           onFinish={handleSubmit((data) => {
@@ -134,9 +135,22 @@ const CreateRecipeFormPage: React.FC = () => {
             }
           })}
         >
-          <Divider className="my-3" />
-          <FormItemGroup
-            inputs={
+          <Descriptions
+            size="small"
+            bordered
+            column={3}
+            style={{ background: "white", borderRadius: "8px" }}
+          >
+            <Descriptions.Item
+              label="Nombre de la Formula"
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+              span={3}
+            >
               <Form.Item
                 validateStatus={errors.name ? "error" : ""}
                 help={errors.name?.message}
@@ -150,15 +164,21 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Nombre de la Formula"
-          />
-          <Divider className="mt-0" />
-          <FormItemGroup
-            inputs={
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Producto a Producir"
+              span={2}
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+            >
               <Form.Item
                 validateStatus={errors.productId ? "error" : ""}
                 help={errors.productId?.message}
+                className="w-full"
               >
                 <Controller
                   name="productId"
@@ -171,12 +191,17 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Producto a Producir"
-          />
-          <Divider className="mt-0" />
-          <FormItemGroup
-            inputs={
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Cantidad a Producir"
+              span={1}
+              labelStyle={{
+                fontWeight: "bold",
+              }}
+              contentStyle={{
+                padding: "1.5rem 1rem  0 1rem",
+              }}
+            >
               <Form.Item
                 validateStatus={errors.producedQuantity ? "error" : ""}
                 help={errors.producedQuantity?.message}
@@ -194,18 +219,106 @@ const CreateRecipeFormPage: React.FC = () => {
                   )}
                 />
               </Form.Item>
-            }
-            title="Cantidad a Producir"
-          />
+            </Descriptions.Item>
+          </Descriptions>
         </Form>
-      </Card>
+      </PageDetails>
       <PageContent>
-        <Typography.Title level={4}>Ingredientes</Typography.Title>
+        <div className="flex justify-between align-baseline mb-3">
+          <Typography.Title level={4} className="">
+            Ingredientes
+          </Typography.Title>
+          <div className="flex gap-2 align-baseline">
+            <span>
+              <strong>Costo por Unidad: </strong>
+              <NumberText
+                value={costoUnitario}
+                format="currency"
+                position="right"
+              />
+            </span>
+            <span>
+              <strong>Costo Total: </strong>
+              <NumberText value={totalSum} format="currency" position="right" />
+            </span>
+          </div>
+        </div>
         <RecipeIngredientForm
           ingredients={ingredients}
           setIngredients={setIngredients}
         />
-        <Table columns={columns} dataSource={ingredients} />
+        <Table
+          columns={[
+            {
+              title: "Cantidad",
+              dataIndex: "quantity",
+              width: 80,
+              key: "quantity",
+              render: (_, row) => {
+                return (
+                  <NumberText
+                    value={row.quantity}
+                    unit={row.unit}
+                    position="right"
+                  />
+                );
+              },
+            },
+            {
+              title: "Producto",
+              dataIndex: "productName",
+              key: "productName",
+            },
+            {
+              title: "Costo Unitario",
+              dataIndex: "averageCost",
+              key: "averageCost",
+              align: "right",
+              width: 125,
+              render: (_, row) => (
+                <NumberText
+                  value={row.averageCost}
+                  format="currency"
+                  position="right"
+                />
+              ),
+            },
+            {
+              title: "Total",
+              align: "right",
+              dataIndex: "total",
+              key: "averageCost",
+              width: 165,
+              render: (_, row) => (
+                <NumberText
+                  value={row.total}
+                  format="currency"
+                  position="right"
+                />
+              ),
+            },
+            {
+              title: "Acciones",
+              key: "actions",
+              dataIndex: "actions",
+              width: 100,
+              render: (_, row) => (
+                <div className="flex flex-row-reverse pr-1">
+                  <Button
+                    danger
+                    onClick={() => {
+                      removeItem(ingredients, row.productId);
+                    }}
+                    icon={<DeleteOutlined />}
+                  />
+                </div>
+              ),
+            },
+          ]}
+          dataSource={ingredients}
+          rowKey="productId"
+          pagination={false}
+        />
       </PageContent>
     </>
   );

@@ -103,7 +103,6 @@ const CreateUserFormModal: React.FC<UserFormModalProps> = ({
     >
       <Form onFinish={handleSubmit((data) => mutate(data))}>
         <Divider className="mt-0" />
-
         <FormItemGroup
           inputs={
             <Form.Item

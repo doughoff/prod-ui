@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Divider,
   Form,
   InputNumber,
   Modal,
@@ -111,6 +112,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
       footer={null}
     >
       <Form layout="vertical" onFinish={handleSubmit((data) => mutate(data))}>
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -129,6 +131,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Nombre"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -153,7 +156,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Código de Barras"
         />
-
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -168,9 +171,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
                 render={({ field }) => (
                   <Radio.Group {...field}>
                     <Radio.Button value={"UNIT" as Unit}>Unidad</Radio.Button>
-                    <Radio.Button value={"KG" as Unit}>
-                      Kilogramos
-                    </Radio.Button>
+                    <Radio.Button value={"KG" as Unit}>Kilogramos</Radio.Button>
                     <Radio.Button value={"L" as Unit}>Litros</Radio.Button>
                     <Radio.Button value={"OTHER" as Unit}>Otros</Radio.Button>
                   </Radio.Group>
@@ -180,6 +181,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -199,6 +201,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Factor de Conversión de Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item>
@@ -221,7 +224,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Configuraciones adicionales"
         />
-
+        <Divider className="mt-0" />
         <Form.Item className="pt-3">
           <div className="flex justify-end">
             <Button

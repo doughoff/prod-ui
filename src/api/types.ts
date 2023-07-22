@@ -1,13 +1,12 @@
-export type Status = 'ACTIVE' | 'INACTIVE';
-export type Role = 'ADMIN' | 'OPERATOR';
-export type Unit = 'UNITS' | 'KG' | 'L' | 'OTHER';
-
+export type Status = "ACTIVE" | "INACTIVE";
+export type Role = "ADMIN" | "OPERATOR";
+export type Unit = "UNITS" | "KG" | "L" | "OTHER";
 export type StockMovementType =
-  | 'PURCHASE'
-  | 'ADJUST'
-  | 'SALE'
-  | 'PRODUCTION_OUT'
-  | 'PRODUCTION_IN';
+  | "PURCHASE"
+  | "ADJUST"
+  | "SALE"
+  | "PRODUCTION_OUT"
+  | "PRODUCTION_IN";
 
 export interface QueryResult<T> {
   totalCount: number;
@@ -74,6 +73,8 @@ export interface Ingredient {
   productUnit: Unit;
   recipeId: string;
   quantity: number;
+  stock: number;
+  averageCost: number;
 }
 
 export interface StockMovementItem {
@@ -92,6 +93,7 @@ export interface StockMovement {
   status: Status;
   type: StockMovementType;
   date: string;
+  documentNumber: string;
   entityId?: string;
   entityName?: string;
   createdByUserId: string;
@@ -102,4 +104,11 @@ export interface StockMovement {
   items: StockMovementItem[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface PageFilters {
+  status: Status | "ALL";
+  search: string | undefined;
+  pageSize: number;
+  page: number;
 }

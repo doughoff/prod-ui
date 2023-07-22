@@ -1,12 +1,13 @@
 import React from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Form, InputNumber } from "antd";
+import { Button, Form, InputNumber, message } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { PlusOutlined } from "@ant-design/icons";
 import { ProductSelector } from "../../../components";
 import { RecipeIngredient, ingredientsSchema } from "../recipeSchema";
-import { getProductById } from "../../../api";
+import { Product, getProductById } from "../../../api";
+import { currencyFormatter } from "../../../utils/formatters";
 
 type IngredientsPayloadType = z.infer<typeof ingredientsSchema>;
 
@@ -23,10 +24,14 @@ const RecipeIngredientForm: React.FC<Props> = ({
     handleSubmit,
     setFocus,
     reset,
+    watch,
     formState: { errors },
   } = useForm<IngredientsPayloadType>({
     resolver: zodResolver(ingredientsSchema),
   });
+  const [selectedProduct, setSelectedProduct] = React.useState<
+    Product | undefined
+  >(undefined);
 
   const handleAddIngredient = (newIngredient: RecipeIngredient) => {
     const existingIngredient = ingredients.find(
@@ -39,6 +44,7 @@ const RecipeIngredientForm: React.FC<Props> = ({
           return {
             ...ingredient,
             quantity: ingredient.quantity + newIngredient.quantity,
+            total: ingredient.total + newIngredient.total,
           };
         }
         return ingredient;
@@ -49,33 +55,45 @@ const RecipeIngredientForm: React.FC<Props> = ({
       setIngredients([...ingredients, newIngredient]);
     }
   };
+  const selectedProductId = watch("productId");
+  React.useEffect(() => {
+    if (selectedProductId) {
+      getProductById(selectedProductId)
+        .then((res) => setSelectedProduct(res))
+        .catch(() => {
+          setSelectedProduct(undefined);
+          message.error("No fue posible buscar el producto seleccionado");
+        });
+    } else {
+      setSelectedProduct(undefined);
+    }
+  }, [selectedProductId]);
 
   return (
     <Form
       layout="vertical"
       onFinish={handleSubmit((data) => {
         setFocus("productId");
-        getProductById(data.productId)
-          .then((res) => {
-            handleAddIngredient({
-              quantity: data.quantity,
-              productId: data.productId,
-              averageCost: res.averageCost,
-              productName: res.name,
-              unit: res.unit,
-            });
-          })
-          .catch((err) => console.log(err))
-          .finally(() => {
-            reset({
-              productId: undefined,
-              quantity: 1,
-            });
+        console.log(ingredients);
+        if (selectedProduct) {
+          handleAddIngredient({
+            quantity: data.quantity,
+            productId: data.productId,
+            averageCost: selectedProduct?.averageCost,
+            productName: selectedProduct?.name,
+            unit: selectedProduct?.unit,
+            total: Math.round(selectedProduct?.averageCost * data.quantity),
           });
+          reset({
+            productId: undefined,
+            quantity: 1,
+          });
+        }
       })}
     >
       <div className="flex flex-row gap-2 w-full items-end">
         <Form.Item
+          label="Producto"
           className="w-full"
           validateStatus={errors.productId ? "error" : ""}
           help={errors.productId?.message}
@@ -83,11 +101,13 @@ const RecipeIngredientForm: React.FC<Props> = ({
           <Controller
             name="productId"
             control={control}
-            defaultValue=""
-            render={({ field }) => <ProductSelector {...field} />}
+            render={({ field }) => (
+              <ProductSelector placeholder="Buscar Producto" {...field} />
+            )}
           />
         </Form.Item>
         <Form.Item
+          label="Cantidad"
           validateStatus={errors.quantity ? "error" : ""}
           help={errors.quantity?.message}
           className="w-40"
@@ -99,6 +119,35 @@ const RecipeIngredientForm: React.FC<Props> = ({
             render={({ field }) => (
               <InputNumber {...field} min={0.001} className="w-full" />
             )}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Costo"
+          validateStatus={errors.quantity ? "error" : ""}
+          help={errors.quantity?.message}
+          className="w-80"
+        >
+          <InputNumber
+            className="w-full"
+            value={selectedProduct?.averageCost ?? 0}
+            formatter={(v) => currencyFormatter(v, "right")}
+            disabled
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Total"
+          validateStatus={errors.quantity ? "error" : ""}
+          help={errors.quantity?.message}
+          className="w-80"
+        >
+          <InputNumber
+            className="w-full"
+            value={Math.round(
+              (selectedProduct?.averageCost ?? 0) * watch("quantity")
+            )}
+            formatter={(v) => currencyFormatter(v, "right")}
+            disabled
           />
         </Form.Item>
         <Form.Item className="w-40">

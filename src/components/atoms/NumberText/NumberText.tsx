@@ -12,7 +12,7 @@ export interface Props {
 const NumberText: React.FC<Props> = ({ value, format, unit, position }) => {
   if (format == "currency") {
     return (
-      <span className="numbers">{currencyFormatter(value, position)}</span>
+      <span className="numbers ">{currencyFormatter(value, position)}</span>
     );
   }
   if (format == "unit") {

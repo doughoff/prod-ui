@@ -7,9 +7,16 @@ import {
   UnitTag,
 } from "../../components";
 import { Link, useParams } from "react-router-dom";
-import { editProduct, getProductById } from "../../api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
+import { Product, editProduct, getProductById } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Descriptions,
+  Popconfirm,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import dayjs from "dayjs";
 import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { EditProductFormModal } from "./EditProductForm";
@@ -18,7 +25,7 @@ const ProductDetailPage: React.FC = () => {
   const { productId } = useParams();
   const queryClient = useQueryClient();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => getProductById(productId),
   });
@@ -31,6 +38,50 @@ const ProductDetailPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const disableProduct = (data: Product) => {
+    return editProduct(
+      {
+        name: data.name,
+        barcode: data.barcode,
+        conversionFactor: data.conversionFactor,
+        batchControl: data.batchControl,
+        unit: data.unit,
+        status: isProductActive ? "INACTIVE" : "ACTIVE",
+      },
+      productId
+    );
+  };
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: disableProduct,
+    onSuccess: () => {
+      message.success(
+        `Producto ${isProductActive ? "Desactivado" : "Activado"} correctamente`
+      );
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+    },
+    onError: () => {
+      message.error(
+        `Error al ${isProductActive ? "Desactivar" : "Activar"}  el producto`
+      );
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          height: "300px",
+          margin: "20px 0",
+          marginBottom: "20px",
+          padding: "30px 50px",
+          textAlign: "center",
+        }}
+      >
+        <Spin tip="Cargando..."></Spin>
+      </div>
+    );
+  }
   return (
     <>
       <PageHeader
@@ -64,32 +115,12 @@ const ProductDetailPage: React.FC = () => {
                   okText="Sí"
                   cancelText="No"
                   onConfirm={() => {
-                    editProduct(
-                      {
-                        name: data?.name,
-                        barcode: data?.barcode,
-                        batchControl: data?.batchControl,
-                        conversionFactor: data?.conversionFactor,
-                        unit: data?.unit,
-                        status: isProductActive ? "INACTIVE" : "ACTIVE",
-                      },
-                      data.id
-                    )
-                      .then(() => {
-                        message.info("Producto actualizado correctamente");
-                      })
-                      .catch(() => {
-                        message.error("Error al actualizar el producto");
-                      })
-                      .finally(() => {
-                        queryClient.invalidateQueries({
-                          queryKey: ["producto"],
-                        });
-                      });
+                    mutate(data);
                   }}
                 >
                   <Button
                     type="primary"
+                    loading={isPending}
                     danger={isProductActive}
                     icon={
                       isProductActive ? <DeleteOutlined /> : <CheckOutlined />
@@ -106,10 +137,10 @@ const ProductDetailPage: React.FC = () => {
       <PageDetails>
         <Descriptions
           bordered
+          size="small"
           column={1}
           style={{ background: "white", borderRadius: "8px" }}
         >
-          <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
           <Descriptions.Item label="Codigo de Barra">
             <NumberText value={data?.barcode} />
           </Descriptions.Item>
@@ -123,6 +154,9 @@ const ProductDetailPage: React.FC = () => {
               unit={data?.unit}
               position="right"
             />
+          </Descriptions.Item>
+          <Descriptions.Item label="Factor de Conversión">
+            <NumberText value={data?.conversionFactor} />
           </Descriptions.Item>
           <Descriptions.Item label="Precio Promedio">
             <NumberText
