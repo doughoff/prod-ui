@@ -1,30 +1,30 @@
-import { Roles, Status, User, api } from ".";
+import { QueryResult, Role, Status, User, api } from ".";
 
 interface GetUsers {
-  status?: Status;
+  status?: Status[];
   search?: string;
-  limit: number;
   offset: number;
+  limit: number;
 }
 interface CreateUser {
   name: string;
   email: string;
   password: string;
-  roles: Roles[];
+  roles: Role[];
 }
 interface EditUser {
   name: string;
   email: string;
-  roles: Roles[];
+  roles: Role[];
   status: Status;
 }
 
-const getUsers = (params: GetUsers): Promise<User[]> => {
+const getUsers = (params: GetUsers): Promise<QueryResult<User>> => {
   return new Promise((resolve, reject) => {
     api
       .get("/users", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);

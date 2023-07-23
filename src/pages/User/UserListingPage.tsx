@@ -1,14 +1,20 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PageHeader, RoleTag, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageContent,
+  PageHeader,
+  RoleTag,
+  StatusTag,
+} from "../../components";
 import dayjs from "dayjs";
-import { Status, User, getUsers } from "../../api";
-import { ColumnsType } from "antd/es/table";
-import { Button, Select, Table } from "antd";
+import { PageFilters, User, getUsers } from "../../api";
+import { Button, Input, Pagination, Select, Table } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { useQuery } from "@tanstack/react-query";
 import { CreateUserFormModal } from "./CreateUserForm";
+import { statusToStatusList } from "../../utils/enumListParsers";
 
 const UserListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,74 +30,28 @@ const UserListingPage: React.FC = () => {
   const showModal = () => {
     setIsModalOpen(true);
   };
-
-  const [filter, setFilter] = React.useState<Status | undefined>("ACTIVE");
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["users", filter],
-    queryFn: () => getUsers({ status: filter, limit: 200, offset: 0 }),
+  const [search, setSearch] = React.useState<string | undefined>(undefined);
+  const [filters, setFilters] = React.useState<PageFilters>({
+    status: "ACTIVE",
+    search: undefined,
+    pageSize: 10,
+    page: 1,
   });
 
-  const handleChange = (value: string | Status) => {
-    return setFilter(value as Status);
-  };
-
-  const columns: ColumnsType<User> = [
-    {
-      title: "Fecha de creación",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 150,
-      render: (_, row) => (
-        <span>{dayjs(row.createdAt).format("DD/MM/YYYY")}</span>
-      ),
+  const { data: result, isLoading } = useQuery({
+    queryKey: ["users", filters],
+    queryFn: () => {
+      return getUsers({
+        search: filters.search,
+        status: statusToStatusList(filters.status),
+        offset: (filters.page - 1) * filters.pageSize,
+        limit: filters.pageSize,
+      });
     },
-    {
-      title: "Estado",
-      dataIndex: "status",
-      width: 150,
-      key: "status",
-      render: (_, row) => <StatusTag status={row.status} />,
-    },
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-    },
-
-    {
-      title: "Correo electrónico",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Roles",
-      dataIndex: "roles",
-      key: "roles",
-      render: (_, row) => {
-        return userRoles(row);
-      },
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      width: 100,
-      render: (_, row) => (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => {
-            navigate(`/app/users/info/${row.id}`);
-          }}
-          icon={<EyeOutlined />}
-        />
-      ),
-    },
-  ];
+  });
 
   return (
-    <div>
+    <>
       <PageHeader
         items={[
           {
@@ -103,17 +63,31 @@ const UserListingPage: React.FC = () => {
         ]}
         pageTitle="Usuarios"
       />
-      <div className="mx-6s bg-white h-full">
+
+      <PageContent>
         <div className="flex justify-between gap-3 ">
           <Select
             defaultValue="ACTIVE"
-            style={{ width: 120 }}
-            onChange={handleChange}
+            style={{ width: 150 }}
+            onChange={(value) => {
+              setFilters((prev) => ({
+                ...prev,
+                status: value as PageFilters["status"],
+              }));
+            }}
             options={[
               { value: "ACTIVE", label: "Activos" },
               { value: "INACTIVE", label: "Inactivos" },
-              { value: "ACTIVE,INACTIVE", label: "Todos" },
+              { value: "ALL", label: "Todos" },
             ]}
+          />
+          <Input.Search
+            placeholder="Buscar por nombre del usuario"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onSearch={() => setFilters((prev) => ({ ...prev, search }))}
           />
           <Button icon={<PlusOutlined />} onClick={showModal}>
             Nuevo Usuario
@@ -124,15 +98,89 @@ const UserListingPage: React.FC = () => {
           loading={isLoading}
           className="mt-3"
           size="small"
-          columns={columns}
-          dataSource={data}
+          dataSource={result?.items}
+          columns={[
+            {
+              title: "Fecha de creación",
+              dataIndex: "createdAt",
+              key: "createdAt",
+              width: 150,
+              render: (_, row) => (
+                <NumberText value={dayjs(row.createdAt).format("DD/MM/YYYY")} />
+              ),
+            },
+            {
+              title: "Estado",
+              dataIndex: "status",
+              width: 150,
+              key: "status",
+              render: (_, row) => <StatusTag status={row.status} />,
+            },
+            {
+              title: "Nombre",
+              dataIndex: "name",
+              key: "name",
+            },
+
+            {
+              title: "Correo electrónico",
+              dataIndex: "email",
+              key: "email",
+            },
+            {
+              title: "Roles",
+              dataIndex: "roles",
+              key: "roles",
+              render: (_, row) => {
+                return userRoles(row);
+              },
+            },
+            {
+              title: "Acciones",
+              dataIndex: "actions",
+              key: "actions",
+              width: 100,
+              align: "center",
+              render: (_, row) => (
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    navigate(`/app/users/info/${row.id}`);
+                  }}
+                  icon={<EyeOutlined />}
+                />
+              ),
+            },
+          ]}
+          pagination={false}
+        />
+        <Pagination
+          className="mt-3 float-right"
+          showSizeChanger
+          total={result?.totalCount || 0}
+          current={filters.page}
+          pageSize={filters.pageSize}
+          onChange={(page) => {
+            setFilters((prev) => ({
+              ...prev,
+              page,
+            }));
+          }}
+          onShowSizeChange={(current, size) => {
+            setFilters((prev) => ({
+              ...prev,
+              page: current,
+              pageSize: size,
+            }));
+          }}
         />
         <CreateUserFormModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-      </div>
-    </div>
+      </PageContent>
+    </>
   );
 };
 

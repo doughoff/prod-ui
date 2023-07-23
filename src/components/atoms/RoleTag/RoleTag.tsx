@@ -1,9 +1,9 @@
 import { Tag } from "antd";
-import type { Roles } from "../../../api";
+import type { Role } from "../../../api";
 import React from "react";
 
 export interface Props {
-  role: Roles;
+  role: Role;
   className?: string;
 }
 

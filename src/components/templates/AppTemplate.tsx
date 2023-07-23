@@ -7,9 +7,11 @@ import {
   ShopOutlined,
   CaretUpFilled,
   CaretDownOutlined,
-  LoginOutlined,
   ExperimentOutlined,
   UnorderedListOutlined,
+  SwapOutlined,
+  SelectOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { Layout, Button, Dropdown, Menu } from "antd";
 
@@ -25,14 +27,14 @@ const AppTemplate: React.FC = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const sessionID = localStorage.getItem("sessionID");
-    if (!sessionID) {
+    const loggedIn = localStorage.getItem("loggedIn");
+    if (!loggedIn) {
       navigate("/login");
     }
   }, []);
 
   return (
-    <Layout style={{ height: "100vh" }} className="overflow-hidden">
+    <Layout style={{ height: "100vh" }} className="overflow-hidden ">
       <Header
         style={{
           padding: "0 24px 24px",
@@ -147,8 +149,18 @@ const AppTemplate: React.FC = () => {
             },
             {
               path: "/app/stock_entry",
-              icon: <LoginOutlined />,
+              icon: <SelectOutlined />,
               label: <Link to="/app/stock_entry">Entrada de Estoque</Link>,
+            },
+            {
+              path: "/app/adjust",
+              icon: <SwapOutlined />,
+              label: <Link to="/app/adjust">Ajuste de Estoque</Link>,
+            },
+            {
+              path: "/app/sales",
+              icon: <ShoppingCartOutlined />,
+              label: <Link to="/app/sales">Ventas</Link>,
             },
             {
               path: "/app/recipes",
@@ -164,8 +176,8 @@ const AppTemplate: React.FC = () => {
             },
           ]}
         />
-        <Layout>
-          <Content className="overflow-auto bg-gray-100">
+        <Layout className="bg-gray-100 overflow-auto ">
+          <Content className=" flex flex-col w-full max-w-screen-2xl m-auto">
             <Outlet />
           </Content>
         </Layout>

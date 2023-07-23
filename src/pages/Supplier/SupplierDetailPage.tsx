@@ -1,17 +1,30 @@
 import React from "react";
-import { PageHeader, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageDetails,
+  PageHeader,
+  StatusTag,
+} from "../../components";
 import { Link, useParams } from "react-router-dom";
-import { editEntities, getEntitieById } from "../../api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
+import { Entities, editEntities, getEntitieById } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Descriptions,
+  Popconfirm,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import { CheckOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { EditSupplierForm } from "./EditSupplierForm";
+import dayjs from "dayjs";
 
 const SupplierDetailPage: React.FC = () => {
   const { supplierId } = useParams();
   const queryClient = useQueryClient();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["supplier", supplierId],
     queryFn: () => getEntitieById(supplierId),
   });
@@ -24,6 +37,50 @@ const SupplierDetailPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const disableProduct = (data: Entities) => {
+    return editEntities(
+      {
+        name: data.name,
+        ci: data.ci,
+        ruc: data.ruc,
+        status: isSupplierActive ? "INACTIVE" : "ACTIVE",
+      },
+      supplierId
+    );
+  };
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: disableProduct,
+    onSuccess: () => {
+      message.success(
+        `Proveedor ${
+          isSupplierActive ? "Desactivado" : "Activado"
+        } correctamente`
+      );
+      queryClient.invalidateQueries({ queryKey: ["supplier"] });
+    },
+    onError: () => {
+      message.error(
+        `Error al ${isSupplierActive ? "Desactivar" : "Activar"}  el Proveedor`
+      );
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          height: "300px",
+          margin: "20px 0",
+          marginBottom: "20px",
+          padding: "30px 50px",
+          textAlign: "center",
+        }}
+      >
+        <Spin tip="Cargando..."></Spin>
+      </div>
+    );
+  }
   return (
     <>
       <PageHeader
@@ -59,30 +116,12 @@ const SupplierDetailPage: React.FC = () => {
                   okText="Sí"
                   cancelText="No"
                   onConfirm={() => {
-                    editEntities(
-                      {
-                        name: data?.name,
-                        ruc: data?.ruc,
-                        ci: data.ci,
-                        status: isSupplierActive ? "INACTIVE" : "ACTIVE",
-                      },
-                      data.id
-                    )
-                      .then(() => {
-                        message.info("Producto actualizado correctamente");
-                      })
-                      .catch(() => {
-                        message.error("Error al actualizar el producto");
-                      })
-                      .finally(() => {
-                        queryClient.invalidateQueries({
-                          queryKey: ["supplier"],
-                        });
-                      });
+                    mutate(data);
                   }}
                 >
                   <Button
                     type="primary"
+                    loading={isPending}
                     danger={isSupplierActive}
                     icon={
                       isSupplierActive ? <DeleteOutlined /> : <CheckOutlined />
@@ -96,20 +135,27 @@ const SupplierDetailPage: React.FC = () => {
           </div>
         }
       />
-      <div className="px-6">
+      <PageDetails>
         <Descriptions
           bordered
           column={1}
+          size="small"
           style={{ background: "white", borderRadius: "8px" }}
         >
-          <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
+          <Descriptions.Item label="Fecha de Creación">
+            <NumberText value={dayjs(data?.createdAt).format("DD/MM/YYYY")} />
+          </Descriptions.Item>
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
-          <Descriptions.Item label="RUC">{data?.ruc}</Descriptions.Item>
-          <Descriptions.Item label="CI">{data?.ci}</Descriptions.Item>
+          <Descriptions.Item label="RUC">
+            <NumberText value={data?.ruc} />
+          </Descriptions.Item>
+          <Descriptions.Item label="CI">
+            <NumberText value={data?.ci} />
+          </Descriptions.Item>
         </Descriptions>
-      </div>
+      </PageDetails>
       <EditSupplierForm
         supplierData={data}
         isModalOpen={isModalOpen}

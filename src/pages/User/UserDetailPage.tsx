@@ -1,9 +1,22 @@
 import React from "react";
-import { PageHeader, RoleTag, StatusTag } from "../../components";
+import {
+  NumberText,
+  PageDetails,
+  PageHeader,
+  RoleTag,
+  StatusTag,
+} from "../../components";
 import { Link, useParams } from "react-router-dom";
 import { User, editUser, getUserById } from "../../api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Descriptions, Popconfirm, Typography, message } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Descriptions,
+  Popconfirm,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import dayjs from "dayjs";
 import {
   CheckOutlined,
@@ -18,7 +31,7 @@ const UserDetailPage: React.FC = () => {
   const { userId } = useParams();
   const queryClient = useQueryClient();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUserById(userId),
   });
@@ -44,6 +57,48 @@ const UserDetailPage: React.FC = () => {
     setIsResetPasswordOpen(true);
   };
 
+  const disableUser = (data: User) => {
+    return editUser(
+      {
+        name: data.name,
+        email: data.email,
+        roles: data.roles,
+        status: isUserActive ? "INACTIVE" : "ACTIVE",
+      },
+      userId
+    );
+  };
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: disableUser,
+    onSuccess: () => {
+      message.success(
+        `Usuario ${isUserActive ? "Desactivado" : "Activado"} correctamente`
+      );
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+    onError: () => {
+      message.error(
+        `Error al ${isUserActive ? "Desactivar" : "Activar"}  usuario`
+      );
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          height: "300px",
+          margin: "20px 0",
+          marginBottom: "20px",
+          padding: "30px 50px",
+          textAlign: "center",
+        }}
+      >
+        <Spin tip="Cargando..."></Spin>
+      </div>
+    );
+  }
   return (
     <>
       <PageHeader
@@ -61,13 +116,14 @@ const UserDetailPage: React.FC = () => {
         content={
           <div className="flex justify-between">
             <Typography.Title level={3}>
-              {"Infromación de " + data?.name}
+              {"Información de " + data?.name}
             </Typography.Title>
             <div className="flex gap-2">
               <Button icon={<EditOutlined />} onClick={showEditModal}>
                 Editar
               </Button>
               <Button
+                disabled
                 icon={<ReloadOutlined />}
                 onClick={showResetPasswordModal}
               >
@@ -83,27 +139,11 @@ const UserDetailPage: React.FC = () => {
                   okText="Sí"
                   cancelText="No"
                   onConfirm={() => {
-                    editUser(
-                      {
-                        name: data?.name,
-                        email: "test1234@test.com",
-                        roles: data?.roles,
-                        status: isUserActive ? "INACTIVE" : "ACTIVE",
-                      },
-                      data.id
-                    )
-                      .then(() => {
-                        message.info("Usuario actualizado correctamente");
-                      })
-                      .catch(() => {
-                        message.error("Error al actualizar el usuario");
-                      })
-                      .finally(() => {
-                        queryClient.invalidateQueries({ queryKey: ["user"] });
-                      });
+                    mutate(data);
                   }}
                 >
                   <Button
+                    loading={isPending}
                     type="primary"
                     danger={isUserActive}
                     icon={isUserActive ? <DeleteOutlined /> : <CheckOutlined />}
@@ -116,18 +156,14 @@ const UserDetailPage: React.FC = () => {
           </div>
         }
       />
-      <div className="px-6">
-        <Descriptions
-          bordered
-          column={1}
-          style={{ background: "white", borderRadius: "8px" }}
-        >
-          <Descriptions.Item label="Nombre">{data?.name}</Descriptions.Item>
+
+      <PageDetails>
+        <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="Estado">
             {data ? <StatusTag status={data?.status} /> : <></>}
           </Descriptions.Item>
           <Descriptions.Item label="Fecha de Creación">
-            {dayjs(data?.createdAt).format("DD/MM/YYYY")}
+            <NumberText value={dayjs(data?.createdAt).format("DD/MM/YYYY")} />
           </Descriptions.Item>
           <Descriptions.Item label="Correo Electronico">
             {data?.email}
@@ -137,7 +173,7 @@ const UserDetailPage: React.FC = () => {
             {userRoles(data)}
           </Descriptions.Item>
         </Descriptions>
-      </div>
+      </PageDetails>
       <EditUserFormModal
         userData={data}
         isModalOpen={isEditModalOpen}

@@ -1,7 +1,7 @@
-import { Product, Status, Units, api } from ".";
+import { Product, QueryResult, Status, Unit, api } from ".";
 
 interface GetProducts {
-  status?: Status;
+  status?: Status[];
   search?: string;
   limit: number;
   offset: number;
@@ -9,7 +9,7 @@ interface GetProducts {
 interface CreateProduct {
   barcode: string;
   name: string;
-  unit: Units;
+  unit: Unit;
   conversionFactor: number;
   batchControl: boolean;
 }
@@ -17,18 +17,18 @@ interface CreateProduct {
 interface EditProduct {
   barcode: string;
   name: string;
-  unit: Units;
+  unit: Unit;
   conversionFactor: number;
   batchControl: boolean;
   status: Status;
 }
 
-const getProducts = (params: GetProducts): Promise<Product[]> => {
+const getProducts = (params: GetProducts): Promise<QueryResult<Product>> => {
   return new Promise((resolve, reject) => {
     api
       .get("/products", { params })
       .then((res) => {
-        resolve(res.data.items);
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);

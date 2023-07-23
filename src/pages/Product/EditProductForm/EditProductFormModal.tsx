@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Divider,
   Form,
   InputNumber,
   Modal,
@@ -15,7 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckOutlined } from "@ant-design/icons";
-import { Product, Units, checkBarcode, editProduct } from "../../../api";
+import { Product, Unit, checkBarcode, editProduct } from "../../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormItemGroup } from "../../../components";
 import { productSchema } from "../productSchema";
@@ -111,6 +112,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
       footer={null}
     >
       <Form layout="vertical" onFinish={handleSubmit((data) => mutate(data))}>
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -129,6 +131,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Nombre"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -153,7 +156,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Código de Barras"
         />
-
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -167,12 +170,10 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
                 defaultValue={productData?.unit}
                 render={({ field }) => (
                   <Radio.Group {...field}>
-                    <Radio.Button value={"UNIT" as Units}>Unidad</Radio.Button>
-                    <Radio.Button value={"KG" as Units}>
-                      Kilogramos
-                    </Radio.Button>
-                    <Radio.Button value={"L" as Units}>Litros</Radio.Button>
-                    <Radio.Button value={"OTHER" as Units}>Otros</Radio.Button>
+                    <Radio.Button value={"UNIT" as Unit}>Unidad</Radio.Button>
+                    <Radio.Button value={"KG" as Unit}>Kilogramos</Radio.Button>
+                    <Radio.Button value={"L" as Unit}>Litros</Radio.Button>
+                    <Radio.Button value={"OTHER" as Unit}>Otros</Radio.Button>
                   </Radio.Group>
                 )}
               />
@@ -180,6 +181,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item
@@ -199,6 +201,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Factor de Conversión de Unidad"
         />
+        <Divider className="mt-0" />
         <FormItemGroup
           inputs={
             <Form.Item>
@@ -221,7 +224,7 @@ const EditProductFormModal: React.FC<ProductFormModalProps> = ({
           }
           title="Configuraciones adicionales"
         />
-
+        <Divider className="mt-0" />
         <Form.Item className="pt-3">
           <div className="flex justify-end">
             <Button

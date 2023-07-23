@@ -13,7 +13,7 @@ import {
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FormItemGroup } from "../../../components";
-import { Units } from "../../../api";
+import { Unit } from "../../../api";
 import { productSchema } from "../productSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -22,19 +22,21 @@ import { CheckOutlined } from "@ant-design/icons";
 
 interface ProductFormModalProps {
   isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onCancel: () => void;
 }
 type CreateProductPayloadType = z.infer<typeof productSchema>;
 
 const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
   isModalOpen,
-  setIsModalOpen,
+  onCancel,
 }) => {
   const queryClient = useQueryClient();
+
   const handleCancel = () => {
-    setIsModalOpen(false);
+    onCancel();
     reset();
   };
+
   const {
     control,
     handleSubmit,
@@ -46,6 +48,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
   } = useForm<CreateProductPayloadType>({
     resolver: zodResolver(productSchema),
   });
+
   const debounceTimer = React.useRef<number | null>(null);
   const validateUniqueBarcode = React.useCallback(() => {
     if (debounceTimer.current) {
@@ -71,6 +74,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
         });
     }, 300);
   }, []);
+
   const createNewProduct = React.useCallback(
     (data: CreateProductPayloadType) => {
       return createProduct({
@@ -87,10 +91,9 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
   const { isPending, mutate } = useMutation({
     mutationFn: createNewProduct,
     onSuccess: () => {
-      reset();
       message.success("Producto creado correctamente");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      setIsModalOpen(false);
+      handleCancel();
     },
     onError: () => {
       message.error("Error al crear   producto");
@@ -164,12 +167,12 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
                 defaultValue={"UNITS"}
                 render={({ field }) => (
                   <Radio.Group {...field}>
-                    <Radio.Button value={"UNITS" as Units}>Unidad</Radio.Button>
-                    <Radio.Button value={"KG" as Units}>
+                    <Radio.Button value={"UNITS" as Unit}>Unidad</Radio.Button>
+                    <Radio.Button value={"KG" as Unit}>
                       Kilogramos
                     </Radio.Button>
-                    <Radio.Button value={"L" as Units}>Litros</Radio.Button>
-                    <Radio.Button value={"OTHER" as Units}>Otros</Radio.Button>
+                    <Radio.Button value={"L" as Unit}>Litros</Radio.Button>
+                    <Radio.Button value={"OTHER" as Unit}>Otros</Radio.Button>
                   </Radio.Group>
                 )}
               />
@@ -226,10 +229,7 @@ const CreateProductFormModal: React.FC<ProductFormModalProps> = ({
             <Button
               className="mr-2"
               disabled={isPending}
-              onClick={() => {
-                reset();
-                setIsModalOpen(false);
-              }}
+              onClick={handleCancel}
             >
               Cancelar
             </Button>

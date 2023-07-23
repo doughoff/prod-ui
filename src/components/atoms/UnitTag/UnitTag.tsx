@@ -1,14 +1,14 @@
 import React from "react";
 import { Tag } from "antd";
-import { Units } from "../../../api";
+import { Unit } from "../../../api";
 
 export interface Props {
-  unit: Units;
+  unit: Unit;
   className?: string;
 }
 
 const UnitTag: React.FC<Props> = ({ unit, className }) => {
-  if (unit === "UNIT") {
+  if (unit === "UNITS") {
     return (
       <Tag className={className} color="default">
         <strong>UNIDAD</strong>

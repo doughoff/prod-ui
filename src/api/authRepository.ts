@@ -9,14 +9,9 @@ const login = (email: string, password: string): Promise<boolean> => {
         email,
         password,
       })
-      .then((res) => {
-        if (res.data.session_id) {
-          localStorage.setItem('sessionID', res.data.session_id);
-          resolve(true);
-        } else {
-          console.error('api didnt return session id');
-          reject('err_login');
-        }
+      .then(() => {
+        localStorage.setItem('loggedIn', 'true');
+        resolve(true);
       })
       .catch((err) => {
         reject(err);
@@ -25,16 +20,10 @@ const login = (email: string, password: string): Promise<boolean> => {
 };
 const logout = (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
-    const sessionID = localStorage.getItem('sessionID');
-    if (!sessionID) {
-      resolve(true);
-      return;
-    }
-
     api
       .post('/auth/logout')
       .then(() => {
-        localStorage.removeItem('sessionID');
+        localStorage.removeItem('loggedIn');
         resolve(true);
       })
       .catch((err) => {
